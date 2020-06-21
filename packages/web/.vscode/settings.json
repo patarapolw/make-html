@@ -1,0 +1,7 @@
+{
+  "css.validate": false, // Disable css built-in lint
+  "stylelint.enable": true, // Enable sytlelint
+  "files.associations": {
+    ".stylelintrc": "jsonc"
+  }
+}
