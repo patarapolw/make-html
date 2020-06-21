@@ -1,10 +1,25 @@
 {
   "name": "@patarapolw/make-html-functions",
-  "version": "1.0.0",
-  "main": "index.js",
+  "version": "1.0.0-pre1",
+  "main": "lib/index.js",
+  "types": "lib/index.d.ts",
   "license": "MIT",
+  "files": [
+    "lib",
+    "src",
+    "declaration.d.ts",
+    "tsconfig.json"
+  ],
+  "repository": "git@github.com:patarapolw/make-html.git",
+  "author": "Pacharapol Withayasakpunt <polv@polv.cc>",
+  "scripts": {
+    "preinstall": "node -e \"if(process.env.npm_execpath.indexOf('yarn') === -1) throw new Error('You must use Yarn to install, not NPM')\"",
+    "build": "tsc",
+    "prepack": "yarn build"
+  },
   "dependencies": {
     "axios": "^0.19.2",
+    "cheerio": "^1.0.0-rc.3",
     "domino": "^2.1.5",
     "fs-extra": "^9.0.1",
     "page-metadata-parser": "^1.1.4",
@@ -12,6 +27,7 @@
     "sharp": "^0.25.4"
   },
   "devDependencies": {
+    "@types/cheerio": "^0.22.18",
     "@types/fs-extra": "^9.0.1",
     "@types/sharp": "^0.25.0",
     "@typescript-eslint/eslint-plugin": "^3.3.0",
@@ -27,5 +43,13 @@
     "eslint-plugin-standard": "^4.0.1",
     "prettier": "^2.0.5",
     "typescript": "^3.9.5"
+  },
+  "engines": {
+    "node": "12.x",
+    "npm": "please-use-yarn",
+    "yarn": "1.x"
+  },
+  "publishConfig": {
+    "access": "public"
   }
 }
