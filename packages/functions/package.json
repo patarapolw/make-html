@@ -14,7 +14,7 @@
   "author": "Pacharapol Withayasakpunt <polv@polv.cc>",
   "scripts": {
     "preinstall": "node -e \"if(process.env.npm_execpath.indexOf('yarn') === -1) throw new Error('You must use Yarn to install, not NPM')\"",
-    "build": "tsc",
+    "build": "rimraf lib && tsc",
     "prepack": "yarn build"
   },
   "dependencies": {
@@ -42,6 +42,7 @@
     "eslint-plugin-simple-import-sort": "^5.0.3",
     "eslint-plugin-standard": "^4.0.1",
     "prettier": "^2.0.5",
+    "rimraf": "^3.0.2",
     "typescript": "^3.9.5"
   },
   "engines": {
