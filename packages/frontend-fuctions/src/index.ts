@@ -9,7 +9,7 @@ import externalLinks from 'markdown-it-external-links'
 import { unescapeAll } from 'markdown-it/lib/common/utils'
 import stylis from 'stylis'
 
-import { compileCardComponent } from './components/card'
+import { compileCardComponent } from './components/card.jsx'
 
 hljsDefineVue(hljs)
 
