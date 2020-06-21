@@ -1,0 +1,10 @@
+*.*
+
+!*.ts
+!*.js
+!*.vue
+
+/dist/
+/*-dist/
+/dist-*/
+/node_modules/
