@@ -1,5 +1,6 @@
-import hljsDefineVue from '@patarapolw/highlightjs-vue'
+import { hljsRegisterVue } from '@patarapolw/highlightjs-vue'
 import imsize from '@patarapolw/markdown-it-imsize'
+import DOMPurify from 'dompurify'
 import hljs from 'highlight.js'
 import HyperPug from 'hyperpug'
 import MarkdownIt from 'markdown-it'
@@ -9,17 +10,17 @@ import externalLinks from 'markdown-it-external-links'
 import { unescapeAll } from 'markdown-it/lib/common/utils'
 import stylis from 'stylis'
 
-import { compileCardComponent } from './components/card.jsx'
+import { compileCardComponent } from './components/card'
 
-hljsDefineVue(hljs)
-
-export default class MakeHtml {
+export class MakeHtml {
   md: MarkdownIt
   hp: HyperPug
 
   html = ''
 
   constructor(public id = 'el-' + Math.random().toString(36).substr(2)) {
+    hljsRegisterVue(hljs)
+
     this.md = MarkdownIt({
       breaks: true,
       html: true,
@@ -56,7 +57,7 @@ export default class MakeHtml {
           if (tokens[idx].nesting === 1) {
             // opening tag
             return (
-              '<details style="margin-bottom: 1rem;"><summary>' +
+              '<details><summary>' +
               this.md.utils.escapeHtml(m[1] || 'Spoiler') +
               '</summary>\n'
             )
@@ -72,7 +73,7 @@ export default class MakeHtml {
     })
   }
 
-  render(s: string) {
+  render(s: string, safe?: boolean) {
     try {
       if (s.startsWith('---\n')) {
         s = s.substr(4).split(/---\n(.*)$/s)[1] || ''
@@ -82,7 +83,13 @@ export default class MakeHtml {
     } catch (e) {}
 
     const body = document.createElement('body')
-    body.innerHTML = this.html
+    if (safe) {
+      body.innerHTML = DOMPurify.sanitize(this.html, {
+        ADD_TAGS: ['style'],
+      })
+    } else {
+      body.innerHTML = this.html
+    }
 
     body.querySelectorAll('style').forEach((el) => {
       el.innerHTML = stylis(`.${this.id}`, el.innerHTML)
@@ -104,7 +111,7 @@ export default class MakeHtml {
       el.setAttribute('loading', 'lazy')
     })
 
-    body.querySelectorAll('a[is="x-card"]').forEach((el) => {
+    body.querySelectorAll('a[data-make-html="card"]').forEach((el) => {
       compileCardComponent(el as HTMLAnchorElement)
     })
 

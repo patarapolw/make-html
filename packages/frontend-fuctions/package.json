@@ -1,6 +1,6 @@
 {
   "name": "@patarapolw/make-html-frontend-fuctions",
-  "version": "1.0.0-pre1",
+  "version": "1.0.0-pre2",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
   "license": "MIT",
@@ -20,10 +20,12 @@
     "prepack": "yarn build"
   },
   "dependencies": {
-    "@patarapolw/highlightjs-vue": "^1.0.0-dev1",
+    "@patarapolw/highlightjs-vue": "^1.0.0-dev3",
     "@patarapolw/markdown-it-imsize": "^2.0.1-dev3",
+    "dompurify": "^2.0.11",
     "highlight.js": "~10.0",
     "hyperpug": "^1.2.0",
+    "markdown-it": "^11.0.0",
     "markdown-it-container": "^3.0.0",
     "markdown-it-emoji": "^1.4.0",
     "markdown-it-external-links": "^0.0.6",
@@ -37,6 +39,7 @@
     "@babel/plugin-transform-react-jsx": "^7.10.3",
     "@babel/preset-env": "^7.10.3",
     "@babel/preset-typescript": "^7.10.1",
+    "@types/dompurify": "^2.0.2",
     "@types/highlight.js": "^9.12.4",
     "@types/markdown-it": "^10.0.1",
     "@typescript-eslint/eslint-plugin": "^3.3.0",
