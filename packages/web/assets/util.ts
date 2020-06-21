@@ -29,7 +29,9 @@ export class Matter {
           yaml.safeLoad(h, {
             schema: yaml.JSON_SCHEMA,
           }) || {}
-      } catch (_) {}
+      } catch (_) {
+        this.header = {}
+      }
 
       return {
         header: this.header,
@@ -37,8 +39,10 @@ export class Matter {
       }
     }
 
+    this.header = {}
+
     return {
-      header: null,
+      header: this.header,
       content: s,
     }
   }

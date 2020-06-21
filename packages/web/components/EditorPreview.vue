@@ -1,5 +1,5 @@
 <template>
-  <section>
+  <section class="tw-p-6">
     <img v-if="image" class="tw-w-full" :src="image" :alt="title" />
 
     <div class="unreset">
@@ -7,7 +7,7 @@
       <div ref="excerpt" />
     </div>
 
-    <div v-show="hasRemaining" class="tw--mx-4">
+    <div v-show="hasRemaining" class="tw--mx-6">
       <div
         class="tw-cursor-pointer tw-flex tw-bg-orange-200 tw-p-4"
         @click="isRemainingShown = !isRemainingShown"
@@ -21,7 +21,7 @@
         </span>
       </div>
 
-      <div ref="remaing" class="unreset tw-m-4" />
+      <div v-show="isRemainingShown" ref="remaining" class="unreset tw-m-4" />
     </div>
   </section>
 </template>
@@ -75,27 +75,23 @@ export default class EditorPreview extends Vue {
     const { content: md } = this.matter.parse(this.markdown)
     // @ts-ignore
     const [excerptMd, remainingMd = ''] = md.split(
-      '\n<!-- excerpt_separator -->\n'
+      /\n<!-- excerpt(?:_separator)? -->\n/
     )
 
-    if (excerpt) {
-      patch(excerpt, () => {
-        elementOpen('div', this.guid, ['class', this.guid])
-        makeIncremental(this.makeHtml.render(excerptMd))()
-        elementClose('div')
-      })
-      this.$emit('excerpt', excerpt.innerHTML)
-    }
+    patch(excerpt, () => {
+      elementOpen('div', this.guid)
+      makeIncremental(this.makeHtml.render(excerptMd))()
+      elementClose('div')
+    })
+    this.$emit('excerpt', excerpt.innerHTML)
 
-    if (remaining) {
-      patch(excerpt, () => {
-        elementOpen('div', this.guid, ['class', this.guid])
-        makeIncremental(this.makeHtml.render(remainingMd))()
-        elementClose('div')
-      })
-      this.$emit('remaining', remaining.innerHTML)
-      this.hasRemaining = !!remainingMd
-    }
+    patch(remaining, () => {
+      elementOpen('div', this.guid)
+      makeIncremental(this.makeHtml.render(remainingMd))()
+      elementClose('div')
+    })
+    this.$emit('remaining', remaining.innerHTML)
+    this.hasRemaining = !!remainingMd
 
     await Promise.all([
       (async () => {
@@ -110,7 +106,7 @@ export default class EditorPreview extends Vue {
       })(),
       (async () => {
         if (await this.parseForXCard(remaining)) {
-          patch(excerpt, () => {
+          patch(remaining, () => {
             elementOpen('div', this.guid, ['class', this.guid])
             makeIncremental(remaining.innerHTML)()
             elementClose('div')

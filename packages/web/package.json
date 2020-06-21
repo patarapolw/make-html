@@ -20,10 +20,10 @@
     "htmlparser2": "^4.1.0",
     "incremental-dom": "^0.7.0",
     "js-yaml": "^3.14.0",
-    "normalize.css": "^8.0.1",
     "nuxt": "^2.13.0",
     "sweetalert2": "^9.15.1",
     "tailwindcss": "^1.4.6",
+    "unreset.css": "^1.0.1",
     "vue-codemirror": "^4.0.6",
     "zod": "^1.7.0"
   },

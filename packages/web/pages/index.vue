@@ -5,15 +5,15 @@
   >
     <section class="editor-column" @scroll="onScroll">
       <nav
-        class="tw-mr-4 tw-flex tw-p-2 tw-bg-indigo-100 tw-items-center tw-font-sans"
+        class="tw-pr-4 tw-flex tw-p-2 tw-bg-indigo-100 tw-items-center tw-font-sans"
       >
-        <span v-if="loading || title">{{ title }}</span>
+        <span v-if="isLoading || title">{{ title }}</span>
         <span v-else class="tw-text-red-600">{{ noTitle }}</span>
 
         <div class="tw-flex-grow" />
 
         <button
-          class="button tw-bg-yellow-300 tw-hover:bg-yellow-500 tw-text-gray-800 tw-mr-2"
+          class="button tw-bg-yellow-300 tw-text-gray-800 tw-mr-2 hover:tw-bg-yellow-500"
           @click="hasPreview = !hasPreview"
           @keypress="hasPreview = !hasPreview"
         >
@@ -21,7 +21,7 @@
         </button>
 
         <button
-          class="button tw-bg-red-300 tw-hover:bg-red-500 tw-text-gray-800"
+          class="button tw-bg-red-300 tw-text-gray-800 hover:tw-bg-red-500"
           :disabled="!title || !isEdited"
           @click="save"
           @keypress="save"
@@ -31,7 +31,7 @@
       </nav>
 
       <client-only>
-        <Codemirror
+        <codemirror
           ref="codemirror"
           v-model="markdown"
           class="tw-flex-grow"
@@ -113,8 +113,8 @@ export default class Editor extends Vue {
     return this.matter.header.type || ''
   }
 
-  get codemirror(): CodeMirror.Editor {
-    return (this.$refs.codemirror as any).codemirror
+  get codemirror(): CodeMirror.Editor | null {
+    return (this.$refs.codemirror as any)?.codemirror || null
   }
 
   get canSave() {
@@ -127,63 +127,65 @@ export default class Editor extends Vue {
 
   mounted() {
     this.isEdited = false
-    this.codemirror.setSize('100%', '100%')
-    this.codemirror.addKeyMap({
-      'Cmd-S': () => {
-        this.save()
-      },
-      'Ctrl-S': () => {
-        this.save()
-      },
-    })
-    this.codemirror.on('cursorActivity', (instance) => {
-      this.cursor = instance.getCursor().line
-    })
-    this.codemirror.on('paste', async (ins, evt) => {
-      const { items } = evt.clipboardData || ({} as any)
-      if (items) {
-        for (const k of Object.keys(items)) {
-          const item = items[k] as DataTransferItem
-          if (!process.static && item.kind === 'file') {
-            evt.preventDefault()
-
-            const blob = item.getAsFile()!
-            const formData = new FormData()
-            formData.append('file', blob)
-
-            const cursor = ins.getCursor()
-            const { filename, url } = await this.$axios.$post(
-              '/serverMiddleware/upload',
-              formData
-            )
-
-            ins.getDoc().replaceRange(`![${filename}](${url})`, cursor)
-          } else if (item.type === 'text/plain') {
-            // evt.preventDefault()
-
-            const cursor = ins.getCursor()
-            item.getAsString((str) => {
-              if (/^https?:\/\/[^ ]+$/.test(str)) {
-                const unloadedXCard = `<a is="x-card" href="${encodeURI(
-                  str
-                )}">${encodeURI(str)}</a>`
-
-                ins.getDoc().replaceRange(unloadedXCard, cursor, {
-                  line: cursor.line,
-                  ch: cursor.ch + str.length,
-                })
-              }
-            })
-          }
-        }
-      }
-    })
     window.onbeforeunload = (e: any) => {
       const msg = this.canSave ? 'Please save before leaving.' : null
       if (msg) {
         e.returnValue = msg
         return msg
       }
+    }
+
+    if (this.codemirror) {
+      this.codemirror.addKeyMap({
+        'Cmd-S': () => {
+          this.save()
+        },
+        'Ctrl-S': () => {
+          this.save()
+        },
+      })
+      this.codemirror.on('cursorActivity', (instance) => {
+        this.cursor = instance.getCursor().line
+      })
+      this.codemirror.on('paste', async (ins, evt) => {
+        const { items } = evt.clipboardData || ({} as any)
+        if (items) {
+          for (const k of Object.keys(items)) {
+            const item = items[k] as DataTransferItem
+            if (!process.static && item.kind === 'file') {
+              evt.preventDefault()
+
+              const blob = item.getAsFile()!
+              const formData = new FormData()
+              formData.append('file', blob)
+
+              const cursor = ins.getCursor()
+              const { filename, url } = await this.$axios.$post(
+                '/serverMiddleware/upload',
+                formData
+              )
+
+              ins.getDoc().replaceRange(`![${filename}](${url})`, cursor)
+            } else if (item.type === 'text/plain') {
+              // evt.preventDefault()
+
+              const cursor = ins.getCursor()
+              item.getAsString((str) => {
+                if (/^https?:\/\/[^ ]+$/.test(str)) {
+                  const unloadedXCard = `<a is="x-card" href="${encodeURI(
+                    str
+                  )}">${encodeURI(str)}</a>`
+
+                  ins.getDoc().replaceRange(unloadedXCard, cursor, {
+                    line: cursor.line,
+                    ch: cursor.ch + str.length,
+                  })
+                }
+              })
+            }
+          }
+        }
+      })
     }
   }
 
@@ -294,7 +296,9 @@ export default class Editor extends Vue {
         }
       )
 
-      this.codemirror.setValue(markdown)
+      if (this.codemirror) {
+        this.codemirror.setValue(markdown)
+      }
       this.filename = filename
 
       Swal.fire({
@@ -326,16 +330,24 @@ export default class Editor extends Vue {
 </script>
 
 <style scoped>
-.CodeMirror-lines {
+.vue-codemirror >>> .CodeMirror {
+  height: 100% !important;
+}
+
+.vue-codemirror >>> .CodeMirror-lines {
   padding-bottom: 100px;
 }
 
-.CodeMirror-line {
+.vue-codemirror >>> .CodeMirror-line {
   word-break: break-all !important;
 }
 
 .button {
-  @apply tw-font-bold tw-py-2 tw-px-4 tw-rounded;
+  @apply tw-py-2 tw-px-4 tw-rounded;
+}
+
+.button:disabled {
+  @apply tw-bg-gray-500 tw-cursor-not-allowed;
 }
 
 .editor-column {

@@ -13,7 +13,7 @@ export default (): Configuration => {
      ** See https://nuxtjs.org/api/configuration-head
      */
     head: {
-      title: '@patarapolw/make-html workbench',
+      title: 'make-html workbench',
       meta: [
         { charset: 'utf-8' },
         { name: 'viewport', content: 'width=device-width, initial-scale=1' },
@@ -34,7 +34,7 @@ export default (): Configuration => {
      ** Plugins to load before mounting the App
      ** https://nuxtjs.org/guide/plugins
      */
-    plugins: [],
+    plugins: ['~plugins/codemirror.client.js'],
     /*
      ** Nuxt.js dev-modules
      */
