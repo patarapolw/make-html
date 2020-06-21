@@ -52,8 +52,12 @@ export default (): Configuration => {
         plugins: [require('tailwindcss')],
       },
     },
+    router: {
+      base: process.env.GH_PAGES,
+    },
     env: {
       filename: process.env.FILENAME || '',
+      sanitizeHtml: process.env.GH_PAGES || process.env.SANITIZE_HTML || '',
     },
   }
 }

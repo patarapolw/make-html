@@ -11,9 +11,29 @@ import '~/assets/styles/tailwind.css'
 export default Vue.extend({})
 </script>
 
-<style>
+<style lang="scss">
 html,
 body {
   margin: 0;
+}
+
+.unreset {
+  a {
+    @apply tw-text-blue-500;
+
+    &:hover {
+      @apply tw-text-blue-800;
+    }
+  }
+
+  table {
+    border-collapse: collapse;
+  }
+
+  table,
+  th,
+  td {
+    border: 1px solid;
+  }
 }
 </style>

@@ -34,6 +34,8 @@ import { Component, Prop, Vue, Watch } from 'nuxt-property-decorator'
 import { makeIncremental } from '../assets/make-incremental'
 import { Matter } from '../assets/util'
 
+import 'highlight.js/styles/default.css'
+
 @Component
 export default class EditorPreview extends Vue {
   @Prop({ required: true }) title!: string

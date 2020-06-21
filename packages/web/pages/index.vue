@@ -1,51 +1,59 @@
 <template>
-  <section
-    class="tw-grid tw-w-screen tw-h-screen"
-    :class="hasPreview ? 'tw-grid-cols-2' : 'tw-grid-cols-1'"
-  >
-    <section class="editor-column" @scroll="onScroll">
-      <nav
-        class="tw-pr-4 tw-flex tw-p-2 tw-bg-indigo-100 tw-items-center tw-font-sans"
-      >
-        <span v-if="isLoading || title">{{ title }}</span>
-        <span v-else class="tw-text-red-600">{{ noTitle }}</span>
-
-        <div class="tw-flex-grow" />
-
-        <button
-          class="button tw-bg-yellow-300 tw-text-gray-800 tw-mr-2 hover:tw-bg-yellow-500"
-          @click="hasPreview = !hasPreview"
-          @keypress="hasPreview = !hasPreview"
+  <section class="tw-w-screen tw-h-screen tw-relative">
+    <Loading
+      v-if="!isReady || isLoading"
+      class="tw-w-screen tw-h-screen tw-absolute tw-top-0 tw-left-0"
+    />
+    <section
+      v-show="isReady"
+      class="tw-w-full tw-h-full tw-grid tw-absolute tw-top-0 tw-left-0"
+      :class="hasPreview ? 'tw-grid-cols-2' : 'tw-grid-cols-1'"
+    >
+      <section class="editor-column" @scroll="onScroll">
+        <nav
+          class="tw-pr-4 tw-flex tw-p-2 tw-bg-indigo-100 tw-items-center tw-font-sans"
         >
-          {{ hasPreview ? 'Hide' : 'Show' }} Preview
-        </button>
+          <span v-if="title">{{ title }}</span>
+          <span v-else class="tw-text-red-600">{{ noTitle }}</span>
 
-        <button
-          class="button tw-bg-red-300 tw-text-gray-800 hover:tw-bg-red-500"
-          :disabled="!title || !isEdited"
-          @click="save"
-          @keypress="save"
-        >
-          Save
-        </button>
-      </nav>
+          <div class="tw-flex-grow" />
 
-      <client-only>
-        <codemirror
-          ref="codemirror"
-          v-model="markdown"
-          class="tw-flex-grow"
-          @input="onCmCodeChange"
+          <button
+            class="button tw-bg-yellow-300 tw-text-gray-800 tw-mr-2 hover:tw-bg-yellow-500"
+            @click="hasPreview = !hasPreview"
+            @keypress="hasPreview = !hasPreview"
+          >
+            {{ hasPreview ? 'Hide' : 'Show' }} Preview
+          </button>
+
+          <button
+            class="button tw-bg-red-300 tw-text-gray-800 hover:tw-bg-red-500"
+            :disabled="!title || !isEdited"
+            @click="save"
+            @keypress="save"
+          >
+            Save
+          </button>
+        </nav>
+
+        <client-only>
+          <codemirror
+            ref="codemirror"
+            v-model="markdown"
+            class="tw-flex-grow"
+            @ready="initializeCodemirror"
+            @input="onCmCodeChange"
+          />
+        </client-only>
+      </section>
+
+      <section v-if="hasPreview" class="editor-column">
+        <EditorPreview
+          :title="title"
+          :markdown="markdown"
+          :scroll-size="scrollSize"
         />
-      </client-only>
-    </section>
-
-    <section v-if="hasPreview" class="editor-column">
-      <EditorPreview
-        :title="title"
-        :markdown="markdown"
-        :scroll-size="scrollSize"
-      />
+      </section>
     </section>
   </section>
 </template>
@@ -59,6 +67,7 @@ import { Component, Vue } from 'nuxt-property-decorator'
 
 import { Matter } from '~/assets/util'
 import EditorPreview from '~/components/EditorPreview.vue'
+import Loading from '~/components/Loading.vue'
 
 declare global {
   namespace CodeMirror {
@@ -71,7 +80,7 @@ declare global {
   }
 }
 @Component<Editor>({
-  beforeRouteLeave(_, __, next) {
+  beforeRouteLeave(_to, _from, next) {
     const msg = this.canSave ? 'Please save before leaving.' : null
     if (msg) {
       Swal.fire({
@@ -90,6 +99,7 @@ declare global {
   },
   components: {
     EditorPreview,
+    Loading,
   },
 })
 export default class Editor extends Vue {
@@ -97,6 +107,7 @@ export default class Editor extends Vue {
 
   markdown = ''
   hasPreview = true
+  isReady = false
   isLoading = false
   isEdited = false
   cursor = 0
@@ -134,63 +145,63 @@ export default class Editor extends Vue {
         return msg
       }
     }
-
-    if (this.codemirror) {
-      this.codemirror.addKeyMap({
-        'Cmd-S': () => {
-          this.save()
-        },
-        'Ctrl-S': () => {
-          this.save()
-        },
-      })
-      this.codemirror.on('cursorActivity', (instance) => {
-        this.cursor = instance.getCursor().line
-      })
-      this.codemirror.on('paste', async (ins, evt) => {
-        const { items } = evt.clipboardData || ({} as any)
-        if (items) {
-          for (const k of Object.keys(items)) {
-            const item = items[k] as DataTransferItem
-            if (!process.static && item.kind === 'file') {
-              evt.preventDefault()
-
-              const blob = item.getAsFile()!
-              const formData = new FormData()
-              formData.append('file', blob)
-
-              const cursor = ins.getCursor()
-              const { filename, url } = await this.$axios.$post(
-                '/serverMiddleware/upload',
-                formData
-              )
-
-              ins.getDoc().replaceRange(`![${filename}](${url})`, cursor)
-            } else if (item.type === 'text/plain') {
-              // evt.preventDefault()
-
-              const cursor = ins.getCursor()
-              item.getAsString((str) => {
-                if (/^https?:\/\/[^ ]+$/.test(str)) {
-                  const unloadedXCard = `<a is="x-card" href="${encodeURI(
-                    str
-                  )}">${encodeURI(str)}</a>`
-
-                  ins.getDoc().replaceRange(unloadedXCard, cursor, {
-                    line: cursor.line,
-                    ch: cursor.ch + str.length,
-                  })
-                }
-              })
-            }
-          }
-        }
-      })
-    }
   }
 
   beforeDestroy() {
     window.onbeforeunload = null
+  }
+
+  initializeCodemirror(cm: CodeMirror.Editor) {
+    this.isReady = true
+    cm.addKeyMap({
+      'Cmd-S': () => {
+        this.save()
+      },
+      'Ctrl-S': () => {
+        this.save()
+      },
+    })
+    cm.on('cursorActivity', (instance) => {
+      this.cursor = instance.getCursor().line
+    })
+    cm.on('paste', async (ins, evt) => {
+      const { items } = evt.clipboardData || ({} as any)
+      if (items) {
+        for (const k of Object.keys(items)) {
+          const item = items[k] as DataTransferItem
+          if (!process.static && item.kind === 'file') {
+            evt.preventDefault()
+
+            const blob = item.getAsFile()!
+            const formData = new FormData()
+            formData.append('file', blob)
+
+            const cursor = ins.getCursor()
+            const { filename, url } = await this.$axios.$post(
+              '/serverMiddleware/upload',
+              formData
+            )
+
+            ins.getDoc().replaceRange(`![${filename}](${url})`, cursor)
+          } else {
+            const cursor = ins.getCursor()
+            item.getAsString((str) => {
+              if (/^https?:\/\/[^ ]+$/.test(str)) {
+                evt.preventDefault()
+                const unloadedXCard = `<a is="x-card" href="${encodeURI(
+                  str
+                )}">${encodeURI(str)}</a>`
+
+                ins.getDoc().replaceRange(unloadedXCard, cursor, {
+                  line: cursor.line,
+                  ch: cursor.ch + str.length,
+                })
+              }
+            })
+          }
+        }
+      }
+    })
   }
 
   formatDate(d: Date) {
@@ -227,12 +238,13 @@ export default class Editor extends Vue {
       return false
     }
     try {
+      const { title, date, tag, image } = header
       z.object({
         title: z.string(),
         date: z.string().optional(),
         tag: z.array(z.string()).optional(),
         image: z.string().optional(),
-      }).parse(header)
+      }).parse({ title, date, tag, image })
       return true
     } catch (e) {
       Swal.fire({

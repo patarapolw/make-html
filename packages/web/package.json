@@ -17,6 +17,7 @@
     "any-serialize": "^1.4.12",
     "codemirror": "^5.54.0",
     "dayjs": "^1.8.28",
+    "highlight.js": "^10.1.1",
     "htmlparser2": "^4.1.0",
     "incremental-dom": "^0.7.0",
     "js-yaml": "^3.14.0",
