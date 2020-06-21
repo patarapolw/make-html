@@ -1,9 +1,34 @@
 {
   "name": "@patarapolw/make-html-frontend-fuctions",
   "version": "1.0.0",
-  "main": "index.js",
+  "main": "lib/index.js",
+  "types": "lib/index.d.ts",
   "license": "MIT",
+  "files": [
+    "lib",
+    "src",
+    "declaration.d.ts",
+    "tsconfig.json"
+  ],
+  "scripts": {
+    "preinstall": "node -e \"if(process.env.npm_execpath.indexOf('yarn') === -1) throw new Error('You must use Yarn to install, not NPM')\"",
+    "build": "tsc"
+  },
+  "dependencies": {
+    "@patarapolw/highlightjs-vue": "^1.0.0-dev1",
+    "@patarapolw/markdown-it-imsize": "^2.0.1-dev3",
+    "he": "^1.2.0",
+    "highlight.js": "~10.0",
+    "hyperpug": "^1.2.0",
+    "markdown-it-container": "^3.0.0",
+    "markdown-it-emoji": "^1.4.0",
+    "markdown-it-external-links": "^0.0.6",
+    "stylis": "3"
+  },
   "devDependencies": {
+    "@types/he": "^1.1.1",
+    "@types/highlight.js": "^9.12.4",
+    "@types/markdown-it": "^10.0.1",
     "@typescript-eslint/eslint-plugin": "^3.3.0",
     "@typescript-eslint/parser": "^3.3.0",
     "eslint": "^7.3.0",
@@ -17,5 +42,13 @@
     "eslint-plugin-standard": "^4.0.1",
     "prettier": "^2.0.5",
     "typescript": "^3.9.5"
+  },
+  "engines": {
+    "node": "12.x",
+    "npm": "please-use-yarn",
+    "yarn": "1.x"
+  },
+  "publishConfig": {
+    "access": "public"
   }
 }

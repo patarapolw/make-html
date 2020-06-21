@@ -24,11 +24,5 @@
     "commitizen": {
       "path": "emoji-cz"
     }
-  },
-  "husky": {
-    "hooks": {
-      "pre-commit": "yarn lint && yarn build",
-      "prepare-commit-msg": "exec < /dev/tty && git cz --hook || true"
-    }
   }
 }
