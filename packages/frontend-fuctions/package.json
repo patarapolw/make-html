@@ -1,6 +1,6 @@
 {
   "name": "@patarapolw/make-html-frontend-fuctions",
-  "version": "1.0.0",
+  "version": "1.0.0-pre1",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
   "license": "MIT",
@@ -10,11 +10,14 @@
     "declaration.d.ts",
     "tsconfig.json"
   ],
+  "repository": "git@github.com:patarapolw/make-html.git",
+  "author": "Pacharapol Withayasakpunt <polv@polv.cc>",
   "scripts": {
     "preinstall": "node -e \"if(process.env.npm_execpath.indexOf('yarn') === -1) throw new Error('You must use Yarn to install, not NPM')\"",
     "build": "rimraf lib && run-p 'build:**'",
     "build:types": "tsc --emitDeclarationOnly",
-    "build:js": "babel src --out-dir lib --extensions \".ts,.js,.jsx\" --source-maps inline"
+    "build:js": "babel src --out-dir lib --extensions \".ts,.js,.jsx\" --source-maps inline",
+    "prepack": "yarn build"
   },
   "dependencies": {
     "@patarapolw/highlightjs-vue": "^1.0.0-dev1",

@@ -78,7 +78,7 @@ export default class MakeHtml {
         s = s.substr(4).split(/---\n(.*)$/s)[1] || ''
       }
 
-      this.html = this._mdConvert(s.replace(/<!--.*?-->/g, ''))
+      this.html = this._mdConvert(s)
     } catch (e) {}
 
     const body = document.createElement('body')
