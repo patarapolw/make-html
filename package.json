@@ -12,8 +12,7 @@
   },
   "devDependencies": {
     "commitizen": "^4.1.2",
-    "emoji-cz": "^0.3.1",
-    "husky": "^4.2.5"
+    "emoji-cz": "^0.3.1"
   },
   "engines": {
     "node": "12.x",
