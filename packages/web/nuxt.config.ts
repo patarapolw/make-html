@@ -1,3 +1,5 @@
+import fs from 'fs'
+
 import { Configuration } from '@nuxt/types'
 
 export default (): Configuration => {
@@ -53,11 +55,17 @@ export default (): Configuration => {
       },
     },
     router: {
-      base: process.env.GH_PAGES,
+      base:
+        process.env.GH_PAGES && process.env.NODE_ENV !== 'development'
+          ? `/${process.env.GH_PAGES}`
+          : undefined,
     },
     env: {
       filename: process.env.FILENAME || '',
       sanitizeHtml: process.env.GH_PAGES || process.env.SANITIZE_HTML || '',
+      placeholder: process.env.GH_PAGES
+        ? fs.readFileSync('./example.md', 'utf8')
+        : '',
     },
   }
 }

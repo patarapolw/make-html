@@ -28,7 +28,7 @@ CSS is supported, but is scoped to prevent leakage.
 
 ```html
 <style>
-h1 {
+h2 {
   color: red;
 }
 </style>
@@ -40,7 +40,7 @@ h2 {
 }
 </style>
 
-~~JavaScript, however, is not enabled.~~ Sorry, JavaScript is totally allowed. I allowed HTML.
+JavaScript is totally allowed, as well as HTML. (But, I purified if for GitHub Pages.)
 
 ```html
 <script>
@@ -82,6 +82,6 @@ details
     ```
 ```
 
-## HyperPug / pug
+## HyperPug / Pug.js
 
-I once said that HyperPug / [pug](https://pugjs.org/api/getting-started.html), being a indentation-based syntax, [mixes well with Markdown](https://dev.to/patarapolw/pug-with-markdown-is-magic-yet-underrated-4dla). The above spoiler is indeed an example.
+I once said that HyperPug / [Pug](https://pugjs.org/api/getting-started.html), being a indentation-based syntax, [mixes well with Markdown](https://dev.to/patarapolw/pug-with-markdown-is-magic-yet-underrated-4dla). The above spoiler is indeed an example.

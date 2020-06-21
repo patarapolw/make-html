@@ -273,10 +273,14 @@ export default class Editor extends Vue {
       this.markdown = data
       this.filename = filename
       this.matter.parse(this.markdown)
-      setTimeout(() => {
-        this.isEdited = false
-      }, 100)
+    } else {
+      this.markdown = process.env.placeholder || ''
+      this.matter.parse(this.markdown)
     }
+
+    setTimeout(() => {
+      this.isEdited = false
+    }, 100)
 
     this.isLoading = false
   }

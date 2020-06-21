@@ -1,5 +1,5 @@
 <template>
-  <section class="tw-p-6">
+  <section class="tw-p-6 tw-h-full tw-absolute tw-overflow-y-scroll">
     <img v-if="image" class="tw-w-full" :src="image" :alt="title" />
 
     <div class="unreset">
@@ -82,14 +82,18 @@ export default class EditorPreview extends Vue {
 
     patch(excerpt, () => {
       elementOpen('div', this.guid)
-      makeIncremental(this.makeHtml.render(excerptMd))()
+      makeIncremental(
+        this.makeHtml.render(excerptMd, !!process.env.sanitizeHtml)
+      )()
       elementClose('div')
     })
     this.$emit('excerpt', excerpt.innerHTML)
 
     patch(remaining, () => {
       elementOpen('div', this.guid)
-      makeIncremental(this.makeHtml.render(remainingMd))()
+      makeIncremental(
+        this.makeHtml.render(remainingMd, !!process.env.sanitizeHtml)
+      )()
       elementClose('div')
     })
     this.$emit('remaining', remaining.innerHTML)
