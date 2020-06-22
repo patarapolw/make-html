@@ -62,10 +62,15 @@ export default (): Configuration => {
     },
     env: {
       filename: process.env.FILENAME || '',
-      sanitizeHtml: process.env.GH_PAGES || process.env.SANITIZE_HTML || '',
-      placeholder: process.env.GH_PAGES
-        ? fs.readFileSync('./example.md', 'utf8')
-        : '',
+      sanitizeHtml:
+        process.env.GH_PAGES ||
+        process.env.IS_DEPLOY ||
+        process.env.SANITIZE_HTML ||
+        '',
+      placeholder:
+        process.env.GH_PAGES || process.env.IS_DEPLOY
+          ? fs.readFileSync('./example.md', 'utf8')
+          : '',
     },
   }
 }
