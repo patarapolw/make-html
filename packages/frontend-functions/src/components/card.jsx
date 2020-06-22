@@ -32,13 +32,13 @@ export function compileCardComponent(el) {
   const imgHtml = meta.image ? (
     <div
       className={
-        (imgPos === 'left' ? 'tw-w-64 tw-mr-4 ' : '') +
+        (imgPos !== 'top' ? 'tw-w-64 tw-mr-4 ' : 'tw-h-64 ') +
         'tw-flex tw-items-center tw-content-center tw-overflow-hidden'
       }
     >
       <img
         className={
-          (imgPos === 'left' ? 'tw-w-64 tw-mr-4 ' : 'tw-mb-4 tw-w-full ') +
+          (imgPos !== 'top' ? 'tw-w-64 tw-mr-4 ' : 'tw-mb-4 tw-w-full ') +
           'tw-h-auto'
         }
         src={meta.image}
