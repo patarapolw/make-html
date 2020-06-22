@@ -1,6 +1,7 @@
 ---
 title: Awesome title
 date: Invalid date
+image: https://placeimg.com/640/480/any
 tag:
   - polv
   - demo
