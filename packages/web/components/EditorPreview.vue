@@ -48,8 +48,6 @@ export default class EditorPreview extends Vue {
   hasRemaining = false
   matter = new Matter()
 
-  urlMetadata: Map<string, any> = new Map()
-
   get image() {
     return this.matter.header.image || ''
   }
@@ -98,85 +96,12 @@ export default class EditorPreview extends Vue {
     })
     this.$emit('remaining', remaining.innerHTML)
     this.hasRemaining = !!remainingMd
-
-    await Promise.all([
-      (async () => {
-        if (await this.parseForXCard(excerpt)) {
-          patch(excerpt, () => {
-            elementOpen('div', this.guid, ['class', this.guid])
-            makeIncremental(excerpt.innerHTML)()
-            elementClose('div')
-          })
-          this.$emit('excerpt', excerpt.innerHTML)
-        }
-      })(),
-      (async () => {
-        if (await this.parseForXCard(remaining)) {
-          patch(remaining, () => {
-            elementOpen('div', this.guid, ['class', this.guid])
-            makeIncremental(remaining.innerHTML)()
-            elementClose('div')
-          })
-          this.$emit('excerpt', remaining.innerHTML)
-        }
-      })(),
-    ])
   }
 
   @Watch('scrollSize')
   onEditorScroll() {
     this.$el.scrollTop =
       this.scrollSize * (this.$el.scrollHeight - this.$el.clientHeight)
-  }
-
-  async parseForXCard(ref?: HTMLDivElement) {
-    if (!ref) {
-      return
-    }
-
-    const rs = await Promise.all(
-      Array.from(ref.querySelectorAll('a[is="x-card"]')).map(async (el) => {
-        if (process.static) {
-          return false
-        }
-
-        const href = el.getAttribute('href')
-        if (href) {
-          if (!this.urlMetadata.has(href)) {
-            this.urlMetadata.set(href, {})
-
-            const metadata = await this.$axios.get(
-              '/serverMiddleware/metadata',
-              {
-                params: {
-                  url: href,
-                },
-              }
-            )
-
-            this.urlMetadata.set(href, metadata)
-          }
-
-          const existingMetadata = el.getAttribute('data-metadata')
-          if (!existingMetadata) {
-            el.setAttribute(
-              'data-metadata',
-              JSON.stringify(this.urlMetadata.get(href))
-            )
-
-            return true
-          }
-        }
-
-        return false
-      })
-    )
-
-    if (rs.filter((el) => el).length > 0) {
-      return true
-    }
-
-    return false
   }
 }
 </script>

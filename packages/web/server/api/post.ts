@@ -28,21 +28,24 @@ export default function (f: FastifyInstance, _: any, next: () => void) {
         },
       },
     },
-    async (req, reply) => {
+    async (req) => {
       const { data } = req.body
       const fullPath = contentPath('post', filename)
 
       if (fs.existsSync(fullPath)) {
         fs.writeFileSync(fullPath, data)
 
-        reply.status(201).send()
-        return
+        return {
+          data,
+        }
       }
 
       fs.ensureFileSync(fullPath)
       fs.writeFileSync(fullPath, data)
 
-      reply.status(201).send()
+      return {
+        data,
+      }
     }
   )
 

@@ -14,12 +14,14 @@ import uploadRouter from './api/upload'
 async function start() {
   const config = getConfig()
   config.dev = process.env.NODE_ENV !== 'production'
+  config.env = config.env || {}
+  config.env.isServer = '1'
 
   // Instantiate nuxt.js
   const nuxt = new Nuxt(config)
 
   const {
-    host = process.env.HOST || '127.0.0.1',
+    host = 'localhost',
     port = process.env.PORT || 3000,
   } = nuxt.options.server
 
@@ -55,11 +57,6 @@ async function start() {
       f.register(metadataRouter, { prefix: '/metadata' })
       f.register(postRouter, { prefix: '/post' })
 
-      f.register(fStatic, {
-        prefix: '/media',
-        root: path.join(__dirname, '../content/media'),
-      })
-
       next()
     },
     {
@@ -67,6 +64,11 @@ async function start() {
       prefix: '/api',
     }
   )
+
+  app.register(fStatic, {
+    prefix: '/media',
+    root: path.join(__dirname, '../content/media'),
+  })
 
   app.listen(port, host, (err, addr) => {
     if (err) {
