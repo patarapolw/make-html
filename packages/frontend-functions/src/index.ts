@@ -18,9 +18,10 @@ export class MakeHtml {
 
   html = ''
 
-  constructor(public id = 'el-' + Math.random().toString(36).substr(2)) {
+  constructor(public id = Math.random().toString(36).substr(2)) {
     hljsRegisterVue(hljs)
 
+    this.id = 'el-' + this.id
     this.md = MarkdownIt({
       breaks: true,
       html: true,

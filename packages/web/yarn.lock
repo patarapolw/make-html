@@ -1270,10 +1270,10 @@
   resolved "https://registry.yarnpkg.com/@patarapolw/highlightjs-vue/-/highlightjs-vue-1.0.0-dev3.tgz#41f54bfe2b87ee2b30fcc510cb4a864b92c89d5a"
   integrity sha512-nrwIIM/yi7HliPrAjiT+quiGdB3oL1Lz00mvxwRCspzwhxT0XVyF8EsS6sU4NjyrJhxqPG52RNkRhUa1LFkZtA==
 
-"@patarapolw/make-html-frontend-functions@^1.0.0-pre3":
-  version "1.0.0-pre3"
-  resolved "https://registry.yarnpkg.com/@patarapolw/make-html-frontend-functions/-/make-html-frontend-functions-1.0.0-pre3.tgz#d8a1d3293e7e2ad05249bde37a29d92cf7534933"
-  integrity sha512-L+cJqOCXSsk7+Pbjy1nP/JNKgyHP7ZEdLlVoVz8iwO/ZAzc89Y2QNBgoc53H9sx+TGiawGKMauxsYh+iRjdHog==
+"@patarapolw/make-html-frontend-functions@^1.0.0-pre4":
+  version "1.0.0-pre4"
+  resolved "https://registry.yarnpkg.com/@patarapolw/make-html-frontend-functions/-/make-html-frontend-functions-1.0.0-pre4.tgz#b595b81b1fdc9cbc2b996818355475422f59343d"
+  integrity sha512-EpocexskCLvT8KetABlRkLuNyoc2h5lE3FKw/cH8joOHI07GdaOOzlZltHT5FhsoBzi95328bpMZwSflOntX7w==
   dependencies:
     "@patarapolw/highlightjs-vue" "^1.0.0-dev3"
     "@patarapolw/markdown-it-imsize" "^2.0.1-dev3"
