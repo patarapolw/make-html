@@ -84,4 +84,4 @@ details
 
 ## HyperPug / Pug.js
 
-I once said that HyperPug / [Pug](https://pugjs.org/api/getting-started.html), being a indentation-based syntax, [mixes well with Markdown](https://dev.to/patarapolw/pug-with-markdown-is-magic-yet-underrated-4dla). The above spoiler is indeed an example.
+It is proved that HyperPug / [Pug](https://pugjs.org/api/getting-started.html), being a indentation-based syntax, [mixes well with Markdown](https://dev.to/patarapolw/pug-with-markdown-is-magic-yet-underrated-4dla). The above spoiler is indeed an example.

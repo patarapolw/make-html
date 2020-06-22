@@ -27,7 +27,7 @@
 </template>
 
 <script lang="ts">
-import { MakeHtml } from '@patarapolw/make-html-frontend-fuctions'
+import { MakeHtml } from '@patarapolw/make-html-frontend-functions'
 import { elementClose, elementOpen, patch } from 'incremental-dom'
 import { Component, Prop, Vue, Watch } from 'nuxt-property-decorator'
 
