@@ -17,6 +17,7 @@ export function compileCardComponent(el) {
     : {
         url: el.href,
       }
+  meta.url = el.href
 
   el.rel = 'noreferrer nofollow noopener'
   el.target = '_blank'
@@ -25,7 +26,7 @@ export function compileCardComponent(el) {
   el.classList.add(
     ...(
       'tw-flex tw-m-4 tw-p-4 tw-shadow-lg' +
-      (imgPos === 'left' ? ' tw-flex-row' : ' tw-flex-col')
+      (imgPos !== 'top' ? ' tw-flex-row' : ' tw-flex-col')
     ).split(' ')
   )
 
