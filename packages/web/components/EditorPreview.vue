@@ -1,13 +1,13 @@
 <template>
-  <section class="tw-p-6 tw-h-full tw-absolute tw-overflow-y-scroll tw-w-1/2">
+  <section class="tw-h-full tw-absolute tw-overflow-y-scroll tw-w-1/2">
     <img v-if="image" class="tw-w-full" :src="image" :alt="title" />
 
-    <div class="unreset tw-mb-4">
+    <div class="unreset tw-m-6">
       <h1>{{ title }}</h1>
       <div ref="excerpt" />
     </div>
 
-    <div v-show="hasRemaining" class="tw--mx-6">
+    <div v-show="hasRemaining">
       <div
         class="tw-cursor-pointer tw-flex tw-bg-orange-200 tw-p-4"
         @click="isRemainingShown = !isRemainingShown"
@@ -21,7 +21,7 @@
         </span>
       </div>
 
-      <div v-show="isRemainingShown" ref="remaining" class="unreset tw-m-4" />
+      <div v-show="isRemainingShown" ref="remaining" class="unreset tw-m-6" />
     </div>
   </section>
 </template>
