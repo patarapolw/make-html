@@ -10,6 +10,7 @@ export default (): Configuration => {
      */
     mode: 'universal',
     target: 'static',
+    telemetry: false,
     /*
      ** Headers of the page
      ** See https://nuxtjs.org/api/configuration-head
@@ -61,7 +62,6 @@ export default (): Configuration => {
           : undefined,
     },
     env: {
-      filename: process.env.FILENAME || '',
       sanitizeHtml:
         process.env.GH_PAGES ||
         process.env.IS_DEPLOY ||

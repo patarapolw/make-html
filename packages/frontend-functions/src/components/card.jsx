@@ -17,6 +17,7 @@ export function compileCardComponent(el) {
     : {
         url: el.href,
       }
+  meta.url = el.href
 
   el.rel = 'noreferrer nofollow noopener'
   el.target = '_blank'
@@ -25,20 +26,20 @@ export function compileCardComponent(el) {
   el.classList.add(
     ...(
       'tw-flex tw-m-4 tw-p-4 tw-shadow-lg' +
-      (imgPos === 'left' ? ' tw-flex-row' : ' tw-flex-col')
+      (imgPos !== 'top' ? ' tw-flex-row' : ' tw-flex-col')
     ).split(' ')
   )
 
   const imgHtml = meta.image ? (
     <div
       className={
-        (imgPos === 'left' ? 'tw-w-64 tw-mr-4 ' : '') +
+        (imgPos !== 'top' ? 'tw-w-64 tw-mr-4 ' : 'tw-h-64 ') +
         'tw-flex tw-items-center tw-content-center tw-overflow-hidden'
       }
     >
       <img
         className={
-          (imgPos === 'left' ? 'tw-w-64 tw-mr-4 ' : 'tw-mb-4 tw-w-full ') +
+          (imgPos !== 'top' ? 'tw-w-64 tw-mr-4 ' : 'tw-mb-4 tw-w-full ') +
           'tw-h-auto'
         }
         src={meta.image}

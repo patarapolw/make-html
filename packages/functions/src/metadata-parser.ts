@@ -16,11 +16,20 @@ export interface IPageMetadata {
   // provider?: string
 }
 
-export async function metadataParser(url: string): Promise<IPageMetadata> {
+export async function metadataParser(url: string) {
   const r = await axios.get(url, {
     transformResponse: (d) => d,
   })
 
   const doc = domino.createWindow(r.data).document
-  return getMetadata(doc, url)
+  const { image, title, description }: IPageMetadata = await getMetadata(
+    doc,
+    url
+  )
+
+  return {
+    image,
+    title,
+    description,
+  }
 }

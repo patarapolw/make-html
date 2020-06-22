@@ -1,6 +1,6 @@
 {
   "name": "@patarapolw/make-html-frontend-functions",
-  "version": "1.0.0-pre4",
+  "version": "1.0.0-pre6",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
   "license": "MIT",
