@@ -61,7 +61,6 @@ export default (): Configuration => {
           : undefined,
     },
     env: {
-      filename: process.env.FILENAME || '',
       sanitizeHtml:
         process.env.GH_PAGES ||
         process.env.IS_DEPLOY ||

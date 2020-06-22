@@ -4,9 +4,9 @@
   "private": true,
   "scripts": {
     "preinstall": "node -e \"if(process.env.npm_execpath.indexOf('yarn') === -1) throw new Error('You must use Yarn to install, not NPM')\"",
-    "dev": "nuxt-ts",
+    "dev": "cross-env NODE_ENV=development nodemon server/index.ts",
     "build": "nuxt-ts build && nuxt-ts export",
-    "start": "nuxt-ts start",
+    "start": "cross-env NODE_ENV=production ts-node -O '{\"module\":\"commonjs\"}' server/index.ts",
     "lint": "eslint --ext .ts,.js,.vue --ignore-path .gitignore ."
   },
   "dependencies": {
@@ -14,17 +14,26 @@
     "@nuxtjs/axios": "^5.11.0",
     "@patarapolw/make-html-frontend-functions": "^1.0.0-pre4",
     "@types/codemirror": "^0.0.96",
+    "@types/fs-extra": "^9.0.1",
     "@types/js-yaml": "^3.12.4",
     "any-serialize": "^1.4.12",
     "codemirror": "^5.54.0",
+    "cross-env": "^7.0.2",
     "dayjs": "^1.8.28",
+    "fastify": "^2.15.0",
+    "fastify-file-upload": "^2.0.1",
+    "fastify-static": "^2.7.0",
+    "fs-extra": "^9.0.1",
     "highlight.js": "^10.1.1",
     "htmlparser2": "^4.1.0",
     "incremental-dom": "^0.7.0",
     "js-yaml": "^3.14.0",
     "nuxt": "^2.13.0",
+    "pino-pretty": "^4.0.0",
+    "sanitize-filename": "^1.6.3",
     "sweetalert2": "^9.15.1",
     "tailwindcss": "^1.4.6",
+    "ts-node": "^8.10.2",
     "unreset.css": "^1.0.1",
     "vue-codemirror": "^4.0.6",
     "zod": "^1.7.0"
@@ -41,11 +50,24 @@
     "eslint-plugin-prettier": "^3.1.4",
     "eslint-plugin-simple-import-sort": "^5.0.3",
     "eslint-plugin-vue-a11y": "^0.0.31",
+    "nodemon": "^2.0.4",
     "nuxt-property-decorator": "^2.7.2",
     "prettier": "^2.0.5",
     "sass": "^1.26.8",
     "sass-loader": "^8.0.2",
     "stylelint": "^13.6.1",
     "stylelint-config-recommended": "^3.0.0"
+  },
+  "engines": {
+    "node": "12.x",
+    "npm": "please-use-yarn",
+    "yarn": "1.x"
+  },
+  "nodemonConfig": {
+    "watch": ["server/"],
+    "execMap": {
+      "ts": "ts-node -O '{\"module\":\"commonjs\"}'"
+    },
+    "ext": "ts,js,json"
   }
 }
