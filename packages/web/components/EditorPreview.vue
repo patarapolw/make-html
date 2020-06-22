@@ -1,8 +1,8 @@
 <template>
-  <section class="tw-p-6 tw-h-full tw-absolute tw-overflow-y-scroll">
+  <section class="tw-p-6 tw-h-full tw-absolute tw-overflow-y-scroll tw-w-1/2">
     <img v-if="image" class="tw-w-full" :src="image" :alt="title" />
 
-    <div class="unreset">
+    <div class="unreset tw-mb-4">
       <h1>{{ title }}</h1>
       <div ref="excerpt" />
     </div>

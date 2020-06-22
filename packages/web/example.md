@@ -1,5 +1,9 @@
 ---
-title: Awesome front matter
+title: Awesome title
+date: Invalid date
+tag:
+  - polv
+  - demo
 isCool: true
 numbers:
   - a-list: 1
@@ -19,6 +23,8 @@ These are options of [Markdown-it](https://github.com/markdown-it/markdown-it), 
 |:------|:-------:|--------:|
 | 100   | [a][1]  | ![b][2] |
 | *foo* | **bar** | ~~baz~~ |
+
+<!-- excerpt -->
 
 ## Custom syntaxes
 
