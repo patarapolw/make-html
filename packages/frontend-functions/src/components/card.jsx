@@ -12,9 +12,10 @@ export function compileCardComponent(el) {
    */
   let meta = {}
 
-  try {
-    meta = yaml.safeLoad(el.querySelector('pre[data-template]').innerText)
-  } catch (_) {}
+  const dataMetaEl = el.querySelector('pre[data-template]')
+  if (dataMetaEl && dataMetaEl.innerText) {
+    meta = yaml.safeLoad(dataMetaEl.innerText)
+  }
 
   meta.url = el.href
 

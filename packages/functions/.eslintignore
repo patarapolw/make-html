@@ -8,3 +8,5 @@
 /*-dist/
 /dist-*/
 /node_modules/
+
+/lib/

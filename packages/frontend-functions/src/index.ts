@@ -12,6 +12,8 @@ import stylis from 'stylis'
 
 import { compileCardComponent } from './components/card'
 
+hljsRegisterVue(hljs)
+
 export class MakeHtml {
   md: MarkdownIt
   hp: HyperPug
@@ -19,8 +21,6 @@ export class MakeHtml {
   html = ''
 
   constructor(public id = Math.random().toString(36).substr(2)) {
-    hljsRegisterVue(hljs)
-
     this.id = 'el-' + this.id
     this.md = MarkdownIt({
       breaks: true,

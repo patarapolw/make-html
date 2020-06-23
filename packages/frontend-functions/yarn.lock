@@ -868,10 +868,10 @@
   resolved "https://registry.yarnpkg.com/@patarapolw/eqdict/-/eqdict-1.0.6.tgz#22ddf44bfffc53972fe307aea98eebccd3e22ef5"
   integrity sha512-3PUKImt76k7Jd3bxCvk17t9MssmCjond6vmXjsDlZz4MULumRohFRMh0K+W8gSZiWnWAYweIEi1NSGjVHaeBaQ==
 
-"@patarapolw/highlightjs-vue@^1.0.0-dev3":
-  version "1.0.0-dev3"
-  resolved "https://registry.yarnpkg.com/@patarapolw/highlightjs-vue/-/highlightjs-vue-1.0.0-dev3.tgz#41f54bfe2b87ee2b30fcc510cb4a864b92c89d5a"
-  integrity sha512-nrwIIM/yi7HliPrAjiT+quiGdB3oL1Lz00mvxwRCspzwhxT0XVyF8EsS6sU4NjyrJhxqPG52RNkRhUa1LFkZtA==
+"@patarapolw/highlightjs-vue@^1.0.0-dev4":
+  version "1.0.0-dev4"
+  resolved "https://registry.yarnpkg.com/@patarapolw/highlightjs-vue/-/highlightjs-vue-1.0.0-dev4.tgz#938c2cb037e2129601c0d9644eb5262eacde2013"
+  integrity sha512-p1LgqMO/uwk99u8PZ5AZPs/ITGa3qJzfjuEiof3IB5qEaguRW/0oLw88WC3l2V9BlaYjfDUmHEtiL2TZqW82pQ==
 
 "@patarapolw/markdown-it-imsize@^2.0.1-dev3":
   version "2.0.1-dev3"
@@ -932,6 +932,11 @@
   version "1.0.2"
   resolved "https://registry.yarnpkg.com/@types/mdurl/-/mdurl-1.0.2.tgz#e2ce9d83a613bacf284c7be7d491945e39e1f8e9"
   integrity sha512-eC4U9MlIcu2q0KQmXszyn5Akca/0jrQmwDRgpAMJai7qBWq4amIQhZyNau4VYGtCeALvW1/NtjzJJ567aZxfKA==
+
+"@types/node@^14.0.13":
+  version "14.0.13"
+  resolved "https://registry.yarnpkg.com/@types/node/-/node-14.0.13.tgz#ee1128e881b874c371374c1f72201893616417c9"
+  integrity sha512-rouEWBImiRaSJsVA+ITTFM6ZxibuAlTuNOCyxVbwreu6k6+ujs7DfnU9o+PShFhET78pMBl3eH+AGSI5eOTkPA==
 
 "@types/trusted-types@*":
   version "1.0.4"
