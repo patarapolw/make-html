@@ -61,6 +61,7 @@
 <script lang="ts">
 import {} from 'codemirror'
 import dayjs from 'dayjs'
+import yaml from 'js-yaml'
 import Swal from 'sweetalert2'
 import * as z from 'zod'
 import { Component, Vue } from 'nuxt-property-decorator'
@@ -214,18 +215,23 @@ export default class Editor extends Vue {
                     this.urlMetadata.set(href, metadata)
                   }
 
-                  ins
-                    .getDoc()
-                    .replaceRange(
-                      `<a data-make-html="card" data-metadata='${JSON.stringify(
-                        this.urlMetadata.get(href)
-                      )}' href="${encodeURI(str)}">${encodeURI(str)}</a>`,
-                      cursor,
-                      {
-                        line: cursor.line,
-                        ch: cursor.ch + unloadedXCard.length,
-                      }
-                    )
+                  ins.getDoc().replaceRange(
+                    '```pug parsed\n' +
+                      `a(data-make-html="card" href="${encodeURI(str)}")\n` +
+                      `  | ${encodeURI(str)}\n` +
+                      '  pre(data-template style="display: none;").\n' +
+                      yaml
+                        .safeDump(this.urlMetadata.get(href))
+                        .split('\n')
+                        .map((line) => (line ? `    ${line}` : line))
+                        .join('\n') +
+                      '```\n',
+                    cursor,
+                    {
+                      line: cursor.line,
+                      ch: cursor.ch + unloadedXCard.length,
+                    }
+                  )
                 }
               }
             })
