@@ -1,6 +1,6 @@
 {
   "name": "@patarapolw/make-html-frontend-functions",
-  "version": "1.0.0-pre10",
+  "version": "1.0.0-pre13",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
   "license": "MIT",
@@ -21,6 +21,7 @@
     "@patarapolw/highlightjs-vue": "^1.0.0-dev4",
     "@patarapolw/markdown-it-imsize": "^2.0.1-dev3",
     "dompurify": "^2.0.11",
+    "he": "^1.2.0",
     "highlight.js": "~10.0",
     "hyperpug": "^1.3.2",
     "js-yaml": "^3.14.0",
@@ -33,6 +34,7 @@
   },
   "devDependencies": {
     "@types/dompurify": "^2.0.2",
+    "@types/he": "^1.1.1",
     "@types/highlight.js": "^9.12.4",
     "@types/js-yaml": "^3.12.4",
     "@types/markdown-it": "^10.0.1",

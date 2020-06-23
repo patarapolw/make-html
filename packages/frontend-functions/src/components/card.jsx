@@ -1,4 +1,5 @@
 /** @jsx h */
+import he from 'he'
 import yaml from 'js-yaml'
 import h from 'vhtml'
 
@@ -13,8 +14,9 @@ export function compileCardComponent(el) {
   let meta = {}
 
   const dataMetaEl = el.querySelector('pre[data-template]')
-  if (dataMetaEl && dataMetaEl.innerText) {
-    meta = yaml.safeLoad(dataMetaEl.innerText)
+
+  if (dataMetaEl && dataMetaEl.innerHTML) {
+    meta = yaml.safeLoad(he.decode(dataMetaEl.innerHTML))
   }
 
   meta.url = el.href
