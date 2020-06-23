@@ -1270,19 +1270,20 @@
   resolved "https://registry.yarnpkg.com/@patarapolw/eqdict/-/eqdict-1.0.6.tgz#22ddf44bfffc53972fe307aea98eebccd3e22ef5"
   integrity sha512-3PUKImt76k7Jd3bxCvk17t9MssmCjond6vmXjsDlZz4MULumRohFRMh0K+W8gSZiWnWAYweIEi1NSGjVHaeBaQ==
 
-"@patarapolw/highlightjs-vue@^1.0.0-dev3":
-  version "1.0.0-dev3"
-  resolved "https://registry.yarnpkg.com/@patarapolw/highlightjs-vue/-/highlightjs-vue-1.0.0-dev3.tgz#41f54bfe2b87ee2b30fcc510cb4a864b92c89d5a"
-  integrity sha512-nrwIIM/yi7HliPrAjiT+quiGdB3oL1Lz00mvxwRCspzwhxT0XVyF8EsS6sU4NjyrJhxqPG52RNkRhUa1LFkZtA==
+"@patarapolw/highlightjs-vue@^1.0.0-dev4":
+  version "1.0.0-dev4"
+  resolved "https://registry.yarnpkg.com/@patarapolw/highlightjs-vue/-/highlightjs-vue-1.0.0-dev4.tgz#938c2cb037e2129601c0d9644eb5262eacde2013"
+  integrity sha512-p1LgqMO/uwk99u8PZ5AZPs/ITGa3qJzfjuEiof3IB5qEaguRW/0oLw88WC3l2V9BlaYjfDUmHEtiL2TZqW82pQ==
 
-"@patarapolw/make-html-frontend-functions@^1.0.0-pre7":
-  version "1.0.0-pre7"
-  resolved "https://registry.yarnpkg.com/@patarapolw/make-html-frontend-functions/-/make-html-frontend-functions-1.0.0-pre7.tgz#11eefc14b3ee9a5b2618ffdd6247a0ccd66b9f7b"
-  integrity sha512-oAVObdkxWKAhOifYgvyr002kmd42M3QU+iqUYDIM4vdWFI9Q/9UkYDrsD5Z2qQzQxNRiJLywyGN5KQKMzH5k8A==
+"@patarapolw/make-html-frontend-functions@^1.0.0-pre13":
+  version "1.0.0-pre13"
+  resolved "https://registry.yarnpkg.com/@patarapolw/make-html-frontend-functions/-/make-html-frontend-functions-1.0.0-pre13.tgz#ff417af302c5935dc0b0cb9774fe98ac266c9728"
+  integrity sha512-Kn+A0rdoznAWSTl/DN3liSUDk15hNyCbhU4agiMvKWe/18HuAXzmYxvpvWStT1cJ6Lklu5+n1y+SwKNcZVl8MQ==
   dependencies:
-    "@patarapolw/highlightjs-vue" "^1.0.0-dev3"
+    "@patarapolw/highlightjs-vue" "^1.0.0-dev4"
     "@patarapolw/markdown-it-imsize" "^2.0.1-dev3"
     dompurify "^2.0.11"
+    he "^1.2.0"
     highlight.js "~10.0"
     hyperpug "^1.3.2"
     js-yaml "^3.14.0"
@@ -1293,10 +1294,10 @@
     stylis "3"
     vhtml "^2.2.0"
 
-"@patarapolw/make-html-functions@^1.0.0-pre3":
-  version "1.0.0-pre3"
-  resolved "https://registry.yarnpkg.com/@patarapolw/make-html-functions/-/make-html-functions-1.0.0-pre3.tgz#782f2ac324f40f1c13476849c19a6562493afab0"
-  integrity sha512-vFQMVnv9x23l2MV4HXoBz4QllQ/zweV9v4uIsRU7cRX6R7P6ud+WdGAMa5+CbKJqfbxQKDWfgwZPvjP1OQNJnw==
+"@patarapolw/make-html-functions@^1.0.0-pre8":
+  version "1.0.0-pre8"
+  resolved "https://registry.yarnpkg.com/@patarapolw/make-html-functions/-/make-html-functions-1.0.0-pre8.tgz#c791c58ac8745cc0edc9b073eced5da59511103d"
+  integrity sha512-t9JUynMlG66aSwkRlWMxVlbAnQfMavDZLtsplmoLPx+hpTt51MLG46xW3sHinvAUH//aMTxS+Q9A5D9jeDCJoA==
   dependencies:
     axios "^0.19.2"
     cheerio "^1.0.0-rc.3"

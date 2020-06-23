@@ -12,8 +12,8 @@
   "dependencies": {
     "@nuxt/typescript-runtime": "^0.4.10",
     "@nuxtjs/axios": "^5.11.0",
-    "@patarapolw/make-html-frontend-functions": "^1.0.0-pre7",
-    "@patarapolw/make-html-functions": "^1.0.0-pre3",
+    "@patarapolw/make-html-frontend-functions": "^1.0.0-pre13",
+    "@patarapolw/make-html-functions": "^1.0.0-pre8",
     "@types/codemirror": "^0.0.96",
     "@types/fs-extra": "^9.0.1",
     "@types/js-yaml": "^3.12.4",

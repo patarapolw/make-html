@@ -13,7 +13,7 @@ export function isUrl(s: string) {
 }
 
 export function styleSizeToNumber(s: string) {
-  return s.endsWith('px') ? parseInt(s) : null
+  return s && s.endsWith('px') ? parseInt(s) : null
 }
 
 export function extractFilenameFromUrl(

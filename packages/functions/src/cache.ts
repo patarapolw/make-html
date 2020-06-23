@@ -15,13 +15,13 @@ export class CacheMedia {
     const $ = cheerio.load(html)
 
     await Promise.all(
-      Array.from($('image')).map(async (el) => {
+      Array.from($('img')).map(async (el) => {
         const $el = $(el)
-        return this.localizeImage($el)
+        await this.localizeImage($el)
       })
     )
 
-    return $.root().html() || html
+    return $('body').html() || html
   }
 
   async minimizeImage(data: Buffer, $el?: Cheerio | null) {
@@ -65,23 +65,23 @@ export class CacheMedia {
           responseType: 'arraybuffer',
         })
 
-        const newUrl = `media/${crypto
+        const newUrl = `${crypto
           .createHash('sha256')
           .update(data)
           .digest('hex')}/${extractFilenameFromUrl(src, 'image.webp', {
           preferredExt: ['.webp'],
         })}`
 
+        if ($el) {
+          $el.attr('src', `/media/${newUrl}`)
+          $el.attr('data-original-src', src)
+        }
+
         await fs.ensureFile(path.join(this.dst, newUrl))
         await fs.writeFile(
           path.join(this.dst, newUrl),
-          this.minimizeImage(data, $el)
+          await this.minimizeImage(data, $el)
         )
-
-        if ($el) {
-          $el.attr('src', `/${newUrl}`)
-          $el.attr('data-original-src', src)
-        }
 
         return newUrl
       } catch (_) {}
