@@ -1,4 +1,5 @@
 /** @jsx h */
+import yaml from 'js-yaml'
 import h from 'vhtml'
 
 /**
@@ -6,44 +7,38 @@ import h from 'vhtml'
  * @param {HTMLAnchorElement} el
  */
 export function compileCardComponent(el) {
-  const sMetadata = el.getAttribute('data-metadata')
-  const imgPos = el.getAttribute('data-image-position')
-
   /**
    * @type {IPageMetadata}
    */
-  const meta = sMetadata
-    ? JSON.parse(sMetadata)
-    : {
-        url: el.href,
-      }
+  let meta = {}
+
+  try {
+    meta = yaml.safeLoad(el.querySelector('pre[data-template]').innerText)
+  } catch (_) {}
+
   meta.url = el.href
 
   el.rel = 'noreferrer nofollow noopener'
   el.target = '_blank'
-  el.setAttribute('data-html', el.innerHTML.trim())
+  el.setAttribute(
+    'data-html',
+    el.innerHTML.replace(/<template>.+?<\/template>/gs, '').trim()
+  )
 
   el.classList.add(
-    ...(
-      'tw-flex tw-m-4 tw-p-4 tw-shadow-lg' +
-      (imgPos !== 'top' ? ' tw-flex-row' : ' tw-flex-col')
-    ).split(' ')
+    ...'tw-flex tw-m-4 tw-p-4 tw-shadow-lg tw-flex-row'.split(' ')
   )
 
   const imgHtml = meta.image ? (
     <div
-      className={
-        (imgPos !== 'top' ? 'tw-w-64 tw-mr-4 ' : 'tw-h-64 ') +
-        'tw-flex tw-items-center tw-content-center tw-overflow-hidden'
-      }
+      className="tw-mr-4 tw-flex tw-items-center tw-content-center tw-overflow-hidden"
+      style="width: 100px;"
     >
       <img
-        className={
-          (imgPos !== 'top' ? 'tw-w-64 tw-mr-4 ' : 'tw-mb-4 tw-w-full ') +
-          'tw-h-auto'
-        }
+        className="tw-h-auto"
         src={meta.image}
         alt={meta.title || meta.url}
+        style="width: 100px;"
       />
     </div>
   ) : (
@@ -55,15 +50,23 @@ export function compileCardComponent(el) {
     (
       <div>
         {meta.title ? (
-          <h3 className="tw-text-blue-700" style="margin-block-start: 0;">
+          <h3
+            className="tw-text-blue-700"
+            style="margin-block-start: 0; margin-bottom: 0;"
+          >
             {meta.title}
           </h3>
         ) : (
-          <h6 className="tw-text-blue-700" style="margin-block-start: 0;">
+          <h4
+            className="tw-text-blue-700"
+            style="margin-block-start: 0; margin-bottom: 0;"
+          >
             {meta.url}
-          </h6>
+          </h4>
         )}
-        {meta.description}
+        {meta.description ? (
+          <div className="tw-mt-3">{meta.description}</div>
+        ) : null}
       </div>
     )
 }
