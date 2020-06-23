@@ -24,6 +24,27 @@ export class CacheMedia {
     return $.root().html() || html
   }
 
+  async minimizeImage(data: Buffer, $el?: Cheerio | null) {
+    return await sharp(data)
+      .resize(
+        ($el
+          ? parseInt($el.attr('width') || '') ||
+            parseInt($el.attr('data-width') || '') ||
+            styleSizeToNumber($el.css('width'))
+          : null) || 800,
+        $el
+          ? parseInt($el.attr('height') || '') ||
+              parseInt($el.attr('data-height') || '') ||
+              styleSizeToNumber($el.css('height'))
+          : null,
+        {
+          withoutEnlargement: true,
+        }
+      )
+      .toFormat('webp', { quality: 80 })
+      .toBuffer()
+  }
+
   /**
    *
    * @param im If used externally, it means full URL. Internally, it uses Cheerio.
@@ -54,22 +75,7 @@ export class CacheMedia {
         await fs.ensureFile(path.join(this.dst, newUrl))
         await fs.writeFile(
           path.join(this.dst, newUrl),
-          await sharp(data)
-            .resize(
-              ($el
-                ? parseInt($el.attr('width') || '') ||
-                  styleSizeToNumber($el.css('width'))
-                : null) || 800,
-              $el
-                ? parseInt($el.attr('height') || '') ||
-                    styleSizeToNumber($el.css('height'))
-                : null,
-              {
-                withoutEnlargement: true,
-              }
-            )
-            .toFormat('webp', { quality: 80 })
-            .toBuffer()
+          this.minimizeImage(data, $el)
         )
 
         if ($el) {

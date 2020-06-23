@@ -1,6 +1,6 @@
 {
   "name": "@patarapolw/make-html-functions",
-  "version": "1.0.0-pre1",
+  "version": "1.0.0-pre3",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
   "license": "MIT",

@@ -61,6 +61,7 @@
 <script lang="ts">
 import {} from 'codemirror'
 import dayjs from 'dayjs'
+import yaml from 'js-yaml'
 import Swal from 'sweetalert2'
 import * as z from 'zod'
 import { Component, Vue } from 'nuxt-property-decorator'
@@ -103,8 +104,6 @@ declare global {
   },
 })
 export default class Editor extends Vue {
-  filename = ''
-
   markdown = ''
   hasPreview = true
   isReady = false
@@ -112,6 +111,7 @@ export default class Editor extends Vue {
   isEdited = false
   cursor = 0
   scrollSize = 0
+  urlMetadata: Map<string, any> = new Map()
 
   readonly noTitle = 'Title must not be empty'
   readonly matter = new Matter()
@@ -169,7 +169,7 @@ export default class Editor extends Vue {
       if (items) {
         for (const k of Object.keys(items)) {
           const item = items[k] as DataTransferItem
-          if (!process.static && item.kind === 'file') {
+          if (process.env.isServer && item.kind === 'file') {
             evt.preventDefault()
 
             const blob = item.getAsFile()!
@@ -178,17 +178,17 @@ export default class Editor extends Vue {
 
             const cursor = ins.getCursor()
             const { filename, url } = await this.$axios.$post(
-              '/serverMiddleware/upload',
+              '/api/upload',
               formData
             )
 
             ins.getDoc().replaceRange(`![${filename}](${url})`, cursor)
           } else {
             const cursor = ins.getCursor()
-            item.getAsString((str) => {
+            item.getAsString(async (str) => {
               if (/^https?:\/\/[^ ]+$/.test(str)) {
                 evt.preventDefault()
-                const unloadedXCard = `<a is="x-card" href="${encodeURI(
+                const unloadedXCard = `<a data-make-html="card" href="${encodeURI(
                   str
                 )}">${encodeURI(str)}</a>`
 
@@ -196,6 +196,43 @@ export default class Editor extends Vue {
                   line: cursor.line,
                   ch: cursor.ch + str.length,
                 })
+
+                if (!process.env.isServer) {
+                  return false
+                }
+
+                const href = str
+                if (href) {
+                  if (!this.urlMetadata.has(href)) {
+                    this.urlMetadata.set(href, {})
+
+                    const metadata = await this.$axios.$get('/api/metadata', {
+                      params: {
+                        url: href,
+                      },
+                    })
+
+                    this.urlMetadata.set(href, metadata)
+                  }
+
+                  ins.getDoc().replaceRange(
+                    '```pug parsed\n' +
+                      `a(data-make-html="card" href="${encodeURI(str)}")\n` +
+                      `  | ${encodeURI(str)}\n` +
+                      '  pre(data-template style="display: none;").\n' +
+                      yaml
+                        .safeDump(this.urlMetadata.get(href))
+                        .split('\n')
+                        .map((line) => (line ? `    ${line}` : line))
+                        .join('\n') +
+                      '```\n',
+                    cursor,
+                    {
+                      line: cursor.line,
+                      ch: cursor.ch + unloadedXCard.length,
+                    }
+                  )
+                }
               }
             })
           }
@@ -264,14 +301,9 @@ export default class Editor extends Vue {
 
     const { filename } = process.env
 
-    if (filename && !process.static) {
-      const { data } = await this.$axios.$get('/serverMiddleware/post', {
-        params: {
-          filename,
-        },
-      })
+    if (filename && process.env.isServer) {
+      const { data } = await this.$axios.$get('/api/post')
       this.markdown = data
-      this.filename = filename
       this.matter.parse(this.markdown)
     } else {
       this.markdown = process.env.placeholder || ''
@@ -294,7 +326,7 @@ export default class Editor extends Vue {
       return
     }
 
-    if (process.static) {
+    if (!process.env.isServer) {
       Swal.fire({
         toast: true,
         timer: 3000,
@@ -304,18 +336,13 @@ export default class Editor extends Vue {
         showConfirmButton: false,
       })
     } else {
-      const { filename, markdown } = await this.$axios.$put(
-        '/serverMiddleware/post',
-        {
-          data: this.markdown,
-          filename: this.filename,
-        }
-      )
+      const { data } = await this.$axios.$put('/api/post', {
+        data: this.markdown,
+      })
 
       if (this.codemirror) {
-        this.codemirror.setValue(markdown)
+        this.codemirror.setValue(data)
       }
-      this.filename = filename
 
       Swal.fire({
         toast: true,

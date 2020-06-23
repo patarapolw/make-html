@@ -92,3 +92,28 @@ details
 ## HyperPug / Pug.js
 
 It is proved that HyperPug / [Pug](https://pugjs.org/api/getting-started.html), being a indentation-based syntax, [mixes well with Markdown](https://dev.to/patarapolw/pug-with-markdown-is-magic-yet-underrated-4dla). The above spoiler is indeed an example.
+
+## Server-side enhancements
+
+<!-- markdownlint-disable MD034 -->
+https://github.com/patarapolw/make-html upon pasting bare URL, will be converted to
+
+<a data-make-html="card" href="https://github.com/patarapolw/make-html">https://github.com/patarapolw/make-html</a>
+
+and, will be converted, with server-side function, to
+
+```pug parsed
+a(data-make-html="card" href="https://github.com/patarapolw/make-html")
+  | https://github.com/patarapolw/make-html
+  pre(data-template style="display: none;").
+    image: 'https://avatars3.githubusercontent.com/u/21255931?s=400&v=4'
+    title: patarapolw/make-html
+    description: >-
+      Make HTML from Markdown or Hyperpug. Contribute to patarapolw/make-html
+      development by creating an account on GitHub.
+```
+<!-- markdownlint-enable MD034 -->
+
+If you want to test this, you will have to clone the repo locally.
+
+Another function I have added is, upon pasting images from clipboard, it will be uploaded to `/content/media/` folder, and optimized.
