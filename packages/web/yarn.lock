@@ -1293,10 +1293,10 @@
     stylis "3"
     vhtml "^2.2.0"
 
-"@patarapolw/make-html-functions@^1.0.0-pre2":
-  version "1.0.0-pre2"
-  resolved "https://registry.yarnpkg.com/@patarapolw/make-html-functions/-/make-html-functions-1.0.0-pre2.tgz#8d3c240d974d4339b1d2ee46abcaa435c300c54e"
-  integrity sha512-uN1g++QXUZ8CyXXiwaRd1Ib99njuOR+cHoAPS18/ozb0MKEabbws0eEnccn78M90PE5JC+r2+1zU+XSdFr1OYA==
+"@patarapolw/make-html-functions@^1.0.0-pre3":
+  version "1.0.0-pre3"
+  resolved "https://registry.yarnpkg.com/@patarapolw/make-html-functions/-/make-html-functions-1.0.0-pre3.tgz#782f2ac324f40f1c13476849c19a6562493afab0"
+  integrity sha512-vFQMVnv9x23l2MV4HXoBz4QllQ/zweV9v4uIsRU7cRX6R7P6ud+WdGAMa5+CbKJqfbxQKDWfgwZPvjP1OQNJnw==
   dependencies:
     axios "^0.19.2"
     cheerio "^1.0.0-rc.3"
