@@ -29,10 +29,12 @@ export class CacheMedia {
       .resize(
         ($el
           ? parseInt($el.attr('width') || '') ||
+            parseInt($el.attr('data-width') || '') ||
             styleSizeToNumber($el.css('width'))
           : null) || 800,
         $el
           ? parseInt($el.attr('height') || '') ||
+              parseInt($el.attr('data-height') || '') ||
               styleSizeToNumber($el.css('height'))
           : null,
         {

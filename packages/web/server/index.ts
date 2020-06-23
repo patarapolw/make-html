@@ -1,6 +1,7 @@
 import path from 'path'
 
 import fastify from 'fastify'
+import cors from 'fastify-cors'
 import fStatic from 'fastify-static'
 // @ts-ignore
 import { Builder, Nuxt } from 'nuxt'
@@ -38,6 +39,8 @@ async function start() {
       level: 'warn',
     },
   })
+
+  app.register(cors)
 
   app.use((req, res, next) => {
     if (
