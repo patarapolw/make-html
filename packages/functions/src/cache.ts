@@ -15,7 +15,7 @@ export class CacheMedia {
     const $ = cheerio.load(html)
 
     await Promise.all(
-      Array.from($('img')).map(async (el) => {
+      Array.from($('img:not([data-no-cache])')).map(async (el) => {
         const $el = $(el)
         await this.localizeImage($el)
       })
@@ -39,9 +39,10 @@ export class CacheMedia {
           : null,
         {
           withoutEnlargement: true,
+          fit: 'outside',
         }
       )
-      .toFormat('webp', { quality: 80 })
+      // .toFormat('webp', { quality: 80 })
       .toBuffer()
   }
 
@@ -68,8 +69,8 @@ export class CacheMedia {
         const newUrl = `${crypto
           .createHash('sha256')
           .update(data)
-          .digest('hex')}/${extractFilenameFromUrl(src, 'image.webp', {
-          preferredExt: ['.webp'],
+          .digest('hex')}/${extractFilenameFromUrl(src, 'image.png', {
+          preferredExt: ['.jpg', '.gif', '.png', '.jpeg', '.webp'],
         })}`
 
         if ($el) {
