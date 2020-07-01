@@ -20,8 +20,8 @@ export class MakeHtml {
 
   html = ''
 
-  constructor(public id = Math.random().toString(36).substr(2)) {
-    this.id = 'el-' + this.id
+  constructor(public id = Math.random().toString(36)) {
+    this.id = 'el-' + hashFnv32a(this.id)
     this.md = MarkdownIt({
       breaks: true,
       html: true,
@@ -126,4 +126,27 @@ export class MakeHtml {
   private _mdConvert(s: string) {
     return this.md.render(s)
   }
+}
+
+/**
+ * Calculate a 32 bit FNV-1a hash
+ * Found here: https://gist.github.com/vaiorabbit/5657561
+ * Ref.: http://isthe.com/chongo/tech/comp/fnv/
+ *
+ * @param {string} str the input value
+ * @param {integer} [seed] optionally pass the hash of the previous chunk
+ * @returns {string}
+ */
+function hashFnv32a(str: string, seed?: number): string {
+  /* jshint bitwise:false */
+  var i
+  var l
+  var hval = seed === undefined ? 0x811c9dc5 : seed
+
+  for (i = 0, l = str.length; i < l; i++) {
+    hval ^= str.charCodeAt(i)
+    hval += (hval << 1) + (hval << 4) + (hval << 7) + (hval << 8) + (hval << 24)
+  }
+
+  return (hval >>> 0).toString(36)
 }
