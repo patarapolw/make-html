@@ -1,27 +1,13 @@
 {
-  "name": "make-html",
+  "name": "@patarapolw/make-html",
   "private": true,
+  "workspaces": ["packages/x-card"],
   "repository": "git@github.com:patarapolw/make-html.git",
   "author": "Pacharapol Withayasakpunt <polv@polv.cc>",
   "license": "MIT",
-  "scripts": {
-    "preinstall": "node -e \"if(process.env.npm_execpath.indexOf('yarn') === -1) throw new Error('You must use Yarn to install, not NPM')\"",
-    "install": "cd packages/web && yarn",
-    "build": "cd packages/web && yarn build",
-    "start": "cd packages/web && yarn start"
-  },
-  "devDependencies": {
-    "commitizen": "^4.1.2",
-    "emoji-cz": "^0.3.1"
-  },
   "engines": {
     "node": "12.x",
     "npm": "please-use-yarn",
     "yarn": "1.x"
-  },
-  "config": {
-    "commitizen": {
-      "path": "emoji-cz"
-    }
   }
 }
