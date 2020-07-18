@@ -4,12 +4,13 @@
   "main": "index.js",
   "types": "index.d.ts",
   "license": "MIT",
+  "files": [
+    "index.js"
+  ],
+  "repository": "git@github.com:patarapolw/make-html.git",
+  "author": "Pacharapol Withayasakpunt <polv@polv.cc>",
   "scripts": {
     "start": "webpack-dev-server"
-  },
-  "dependencies": {
-    "js-yaml": "^3.14.0",
-    "lit-element": "^2.3.1"
   },
   "devDependencies": {
     "webpack": "^4.43.0",

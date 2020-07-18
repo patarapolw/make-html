@@ -10,8 +10,6 @@ import externalLinks from 'markdown-it-external-links'
 import { unescapeAll } from 'markdown-it/lib/common/utils'
 import stylis from 'stylis'
 
-import { compileCardComponent } from './components/card'
-
 export class MakeHtml {
   md: MarkdownIt
   hp: HyperPug
@@ -126,10 +124,6 @@ export class MakeHtml {
 
     $('img, iframe').each((_, el) => {
       $(el).attr('loading', 'lazy')
-    })
-
-    $('a[data-make-html="card"]').each((_, el) => {
-      compileCardComponent($(el))
     })
 
     return `<div class="${this.id}">${$('body').html() || ''}</div>`

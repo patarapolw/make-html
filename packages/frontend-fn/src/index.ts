@@ -10,8 +10,6 @@ import externalLinks from 'markdown-it-external-links'
 import { unescapeAll } from 'markdown-it/lib/common/utils'
 import stylis from 'stylis'
 
-import { compileCardComponent } from './components/card'
-
 hljsRegisterVue(hljs)
 
 export class MakeHtml {
@@ -74,6 +72,9 @@ export class MakeHtml {
     })
   }
 
+  /**
+   * This should be the only method that requires browser
+   */
   render(s: string, safe?: boolean) {
     try {
       if (s.startsWith('---\n')) {
@@ -110,10 +111,6 @@ export class MakeHtml {
 
     body.querySelectorAll('img, iframe').forEach((el) => {
       el.setAttribute('loading', 'lazy')
-    })
-
-    body.querySelectorAll('a[data-make-html="card"]').forEach((el) => {
-      compileCardComponent(el as HTMLAnchorElement)
     })
 
     return `<div class="${this.id}">${body.innerHTML}</div>`

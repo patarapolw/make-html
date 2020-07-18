@@ -23,11 +23,6 @@
     chalk "^2.0.0"
     js-tokens "^4.0.0"
 
-"@patarapolw/eqdict@^1.0.5":
-  version "1.0.6"
-  resolved "https://registry.yarnpkg.com/@patarapolw/eqdict/-/eqdict-1.0.6.tgz#22ddf44bfffc53972fe307aea98eebccd3e22ef5"
-  integrity sha512-3PUKImt76k7Jd3bxCvk17t9MssmCjond6vmXjsDlZz4MULumRohFRMh0K+W8gSZiWnWAYweIEi1NSGjVHaeBaQ==
-
 "@patarapolw/highlightjs-vue@^1.0.0-dev4":
   version "1.0.0-dev4"
   resolved "https://registry.yarnpkg.com/@patarapolw/highlightjs-vue/-/highlightjs-vue-1.0.0-dev4.tgz#938c2cb037e2129601c0d9644eb5262eacde2013"
@@ -62,20 +57,10 @@
   dependencies:
     "@types/node" "*"
 
-"@types/he@^1.1.1":
-  version "1.1.1"
-  resolved "https://registry.yarnpkg.com/@types/he/-/he-1.1.1.tgz#19e14033c4ee8f1a702c74dcc6182664839ac2b7"
-  integrity sha512-jpzrsR1ns0n3kyWt92QfOUQhIuJGQ9+QGa7M62rO6toe98woQjnsnzjdMtsQXCdvjjmqjS2ZBCC7xKw0cdzU+Q==
-
 "@types/highlight.js@^9.12.4":
   version "9.12.4"
   resolved "https://registry.yarnpkg.com/@types/highlight.js/-/highlight.js-9.12.4.tgz#8c3496bd1b50cc04aeefd691140aa571d4dbfa34"
   integrity sha512-t2szdkwmg2JJyuCM20e8kR2X59WCE5Zkl4bzm1u1Oukjm79zpbiAv+QjnwLnuuV0WHEcX2NgUItu0pAMKuOPww==
-
-"@types/js-yaml@^3.12.5":
-  version "3.12.5"
-  resolved "https://registry.yarnpkg.com/@types/js-yaml/-/js-yaml-3.12.5.tgz#136d5e6a57a931e1cce6f9d8126aa98a9c92a6bb"
-  integrity sha512-JCcp6J0GV66Y4ZMDAQCXot4xprYB+Zfd3meK9+INSJeVZwJmHAW30BBEEkPzXswMXuiyReUGOP3GxrADc9wPww==
 
 "@types/json-schema@^7.0.3":
   version "7.0.5"
@@ -1019,11 +1004,6 @@ has@^1.0.3:
   dependencies:
     function-bind "^1.1.1"
 
-he@^1.2.0:
-  version "1.2.0"
-  resolved "https://registry.yarnpkg.com/he/-/he-1.2.0.tgz#84ae65fa7eafb165fddb61566ae14baf05664f0f"
-  integrity sha512-F/1DnUGPopORZi0ni+CvrCgHQ5FyEAHRLSApuYWMmrbSwoN2Mn/7k+Gl38gJnR7yyDZk6WLXwiGod1JOWNDKGw==
-
 highlight.js@~10.0:
   version "10.0.3"
   resolved "https://registry.yarnpkg.com/highlight.js/-/highlight.js-10.0.3.tgz#5effcc58420f113f279a0badb8ac50c4be06e63b"
@@ -1046,12 +1026,10 @@ htmlparser2@^3.9.1:
     inherits "^2.0.1"
     readable-stream "^3.1.1"
 
-hyperpug@^1.4.0:
-  version "1.4.0"
-  resolved "https://registry.yarnpkg.com/hyperpug/-/hyperpug-1.4.0.tgz#a7086037bdd87dd1b87f73c2332ac0e5739258c2"
-  integrity sha512-v5ZMzBvzQSQFQHiiQdotWZJZorCfk4UPUOhz5Ll3JRoKXVGAmWznipJaM19DNblIjoOiHgjl1PBoU669tR5Isw==
-  dependencies:
-    indent-utils "^1.0.2"
+hyperpug@^1.5.3:
+  version "1.5.3"
+  resolved "https://registry.yarnpkg.com/hyperpug/-/hyperpug-1.5.3.tgz#32cd3413366fa08a386bc70a6dea2d10e379fba9"
+  integrity sha512-HgKAadnxzKxvi7wLamj2159laHgqhnVn4M/gs2hulRj9sOqjj6Dp2chFDzX+d6aAbxjVmMXJiDRLxgJPEVDmQQ==
 
 ieee754@^1.1.4:
   version "1.1.13"
@@ -1080,13 +1058,6 @@ imurmurhash@^0.1.4:
   version "0.1.4"
   resolved "https://registry.yarnpkg.com/imurmurhash/-/imurmurhash-0.1.4.tgz#9218b9b2b928a238b13dc4fb6b6d576f231453ea"
   integrity sha1-khi5srkoojixPcT7a21XbyMUU+o=
-
-indent-utils@^1.0.2:
-  version "1.0.7"
-  resolved "https://registry.yarnpkg.com/indent-utils/-/indent-utils-1.0.7.tgz#41c6eea253155d47f21622c21ae8c90ed6605f97"
-  integrity sha512-ioAGFfPy0Uf3BFjSKKkn3U+Xl1+mMDwMKnmoBm7IN0xSIXJG7ueQGYrv3Ml2W7i44IL37YzwHhay3LQfHdOn8g==
-  dependencies:
-    "@patarapolw/eqdict" "^1.0.5"
 
 inflight@^1.0.4:
   version "1.0.6"
@@ -1184,7 +1155,7 @@ js-tokens@^4.0.0:
   resolved "https://registry.yarnpkg.com/js-tokens/-/js-tokens-4.0.0.tgz#19203fb59991df98e3a287050d4647cdeaf32499"
   integrity sha512-RdJUflcE3cUzKiMqQgsCu06FPu9UdIJO0beYbPhHN4k6apgJtifcoCtT9bcxOpYBtpD2kCM6Sbzg4CausW/PKQ==
 
-js-yaml@^3.13.1, js-yaml@^3.14.0:
+js-yaml@^3.13.1:
   version "3.14.0"
   resolved "https://registry.yarnpkg.com/js-yaml/-/js-yaml-3.14.0.tgz#a7a34170f26a21bb162424d8adacb4113a69e482"
   integrity sha512-/4IbIeHcD9VMHFqDR/gQ7EdZdLimOvW2DdcxFjdyyZ9NsbS+ccrXqVWDtab/lRl5AlUqmpBx8EhPaWR+OtY17A==
@@ -2086,11 +2057,6 @@ validate-npm-package-license@^3.0.1:
   dependencies:
     spdx-correct "^3.0.0"
     spdx-expression-parse "^3.0.0"
-
-vhtml@^2.2.0:
-  version "2.2.0"
-  resolved "https://registry.yarnpkg.com/vhtml/-/vhtml-2.2.0.tgz#369e6823ed6c32cbb9f6e33395bae7c65faa014c"
-  integrity sha512-TPXrXrxBOslRUVnlVkiAqhoXneiertIg86bdvzionrUYhEuiROvyPZNiiP6GIIJ2Q7oPNVyEtIx8gMAZZE9lCQ==
 
 which-pm-runs@^1.0.0:
   version "1.0.0"
