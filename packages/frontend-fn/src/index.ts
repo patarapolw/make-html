@@ -87,7 +87,7 @@ export class MakeHtml {
     const body = document.createElement('body')
     if (safe) {
       body.innerHTML = DOMPurify.sanitize(this.html, {
-        ADD_TAGS: ['style'],
+        ADD_TAGS: ['style', 'x-card'],
       })
     } else {
       body.innerHTML = this.html

@@ -65,7 +65,7 @@ export class XCard extends HTMLElement {
   constructor() {
     super()
 
-    const aEl = this.querySelector('a')
+    const aEl = this.querySelector('a').cloneNode(true)
     if (aEl) {
       const href = aEl.href
       const image = aEl.getAttribute('data-image')

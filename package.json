@@ -1,7 +1,7 @@
 {
   "name": "@patarapolw/make-html",
   "private": true,
-  "workspaces": ["packages/x-card"],
+  "workspaces": ["packages/*"],
   "repository": "git@github.com:patarapolw/make-html.git",
   "author": "Pacharapol Withayasakpunt <polv@polv.cc>",
   "license": "MIT",
