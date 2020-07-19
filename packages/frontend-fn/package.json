@@ -1,0 +1,59 @@
+{
+  "name": "@patarapolw/make-html-frontend-fn",
+  "version": "1.0.1",
+  "main": "lib/index.js",
+  "types": "lib/index.d.ts",
+  "license": "MIT",
+  "files": [
+    "lib",
+    "src",
+    "declaration.d.ts",
+    "tsconfig.json"
+  ],
+  "repository": "git@github.com:patarapolw/make-html.git",
+  "author": "Pacharapol Withayasakpunt <polv@polv.cc>",
+  "scripts": {
+    "build": "rimraf lib && tsc",
+    "prepack": "yarn build"
+  },
+  "dependencies": {
+    "@patarapolw/highlightjs-vue": "^1.0.0-dev4",
+    "@patarapolw/markdown-it-imsize": "^2.0.1-dev3",
+    "dompurify": "^2.0.11",
+    "highlight.js": "~10.0",
+    "hyperpug": "^1.5.3",
+    "markdown-it": "^11.0.0",
+    "markdown-it-container": "^3.0.0",
+    "markdown-it-emoji": "^1.4.0",
+    "markdown-it-external-links": "^0.0.6",
+    "stylis": "3"
+  },
+  "devDependencies": {
+    "@types/dompurify": "^2.0.2",
+    "@types/highlight.js": "^9.12.4",
+    "@types/markdown-it": "^10.0.1",
+    "@types/node": "^14.0.13",
+    "@typescript-eslint/eslint-plugin": "^3.3.0",
+    "@typescript-eslint/parser": "^3.3.0",
+    "eslint": "^7.3.0",
+    "eslint-config-prettier": "^6.11.0",
+    "eslint-config-standard": "^14.1.1",
+    "eslint-plugin-import": "^2.21.2",
+    "eslint-plugin-node": "^11.1.0",
+    "eslint-plugin-prettier": "^3.1.4",
+    "eslint-plugin-promise": "^4.2.1",
+    "eslint-plugin-simple-import-sort": "^5.0.3",
+    "eslint-plugin-standard": "^4.0.1",
+    "prettier": "^2.0.5",
+    "rimraf": "^3.0.2",
+    "typescript": "^3.9.5"
+  },
+  "engines": {
+    "node": "12.x",
+    "npm": "please-use-yarn",
+    "yarn": "1.x"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}
