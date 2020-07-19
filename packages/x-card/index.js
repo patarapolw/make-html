@@ -63,8 +63,13 @@ img {
 
 export class XCard extends HTMLElement {
   connectedCallback() {
+    /**
+     * @type {HTMLAnchorElement}
+     */
     const aEl = this.querySelector('a').cloneNode(true)
     if (aEl) {
+      aEl.target = '_blank'
+
       const href = aEl.href
       const image = aEl.getAttribute('data-image')
       const title = aEl.getAttribute('data-title')

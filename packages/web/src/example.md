@@ -1,14 +1,12 @@
 ---
 title: Awesome title
-date: Invalid date
+date: Some date
 image: https://placeimg.com/600/300/any
 tag:
   - polv
   - demo
-isCool: true
-numbers:
-  - a-list: 1
 ---
+
 ## Extended syntaxes
 
 These are options of [Markdown-it](https://github.com/markdown-it/markdown-it), which I have enabled.
@@ -72,25 +70,25 @@ numbers:
 
 :::
 
-You can also do it the [HyperPug](https://github.com/patarapolw/hyperpug) way, but there won't be syntax highlighting.
+You can also do it the HTML way as well, but there won't be syntax highlighting.
 
-```pug parsed
-details
-  summary Aforementioned matter
-  :markdown
-    Something else
+<details>
+  <summary>Aforementioned matter</summary>
+  <div data-markdown>
+Something else
 
-    ```yaml
-    title: Awesome front matter
-    isCool: true
-    numbers:
-      - a-list: 1
-    ```
+```yaml
+title: Awesome front matter
+isCool: true
+numbers:
+  - a-list: 1
 ```
+  </div>
+</details>
 
 ## HyperPug / Pug.js
 
-It is proved that HyperPug / [Pug](https://pugjs.org/api/getting-started.html), being a indentation-based syntax, [mixes well with Markdown](https://dev.to/patarapolw/pug-with-markdown-is-magic-yet-underrated-4dla). The above spoiler is indeed an example.
+It is proved that HyperPug / [Pug](https://pugjs.org/api/getting-started.html), being a indentation-based syntax, [mixes well with Markdown](https://dev.to/patarapolw/pug-with-markdown-is-magic-yet-underrated-4dla).
 
 ## Server-side enhancements
 
@@ -113,5 +111,3 @@ and, will be converted, with server-side function, to
     https://github.com/patarapolw/make-html
   </a>
 </x-card>
-
-If you want to test this, you will have to clone the repo locally.

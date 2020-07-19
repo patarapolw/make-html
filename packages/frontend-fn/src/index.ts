@@ -147,3 +147,26 @@ function hashFnv32a(str: string, seed?: number): string {
 
   return (hval >>> 0).toString(36)
 }
+
+function getIndent(s: string) {
+  const indents: number[] = []
+  for (const r of s.split(/\r?\n/g)) {
+    if (r.trim()) {
+      const m = /^ +/.exec(r)
+      if (m) {
+        indents.push(m[0].length)
+      }
+    }
+  }
+
+  return indents.length ? Math.min(...indents) : 0
+}
+
+export function stripIndent(s: string, indent = getIndent(s)) {
+  console.log(s)
+
+  return s
+    .split('\n')
+    .map((r) => r.replace(new RegExp(`^ {1,${indent}}`), ''))
+    .join('\n')
+}

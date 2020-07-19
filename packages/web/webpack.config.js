@@ -32,7 +32,7 @@ module.exports = {
     new HtmlWebpackPlugin(),
     new CopyPlugin({
       patterns: [
-        { from: 'public', to: 'dst' },
+        { from: 'public', to: '.' },
       ],
     }),
   ],
