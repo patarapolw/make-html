@@ -24,6 +24,9 @@ module.exports = {
   },
   devServer: {
     contentBase: path.join(__dirname, 'public'),
+    proxy: {
+      '/.netlify': 'http://localhost:9000'
+    }
   },
   plugins: [
     new HtmlWebpackPlugin(),

@@ -36,8 +36,9 @@ import 'codemirror/theme/monokai.css'
 const editorEl = document.getElementById('editor')
 const outputEl = document.getElementById('output')
 const makeHtml = new MakeHtml()
+const urlMetadata = new Map()
 
-const editor = CodeMirror.fromTextArea(editorEl, {
+const cm = CodeMirror.fromTextArea(editorEl, {
   mode: {
     name: 'yaml-frontmatter',
     base: 'markdown',
@@ -58,10 +59,101 @@ const editor = CodeMirror.fromTextArea(editorEl, {
   },
   foldGutter: true,
 })
-editor.setSize('100%', '100%')
+cm.setSize('100%', '100%')
 
-editor.on('change', () => {
-  outputEl.innerHTML = makeHtml.render(editor.getValue(), true)
+cm.on('change', () => {
+  outputEl.innerHTML = makeHtml.render(cm.getValue(), true)
 })
 
-editor.setValue(example)
+// cm.addKeyMap({
+//   'Cmd-S': () => {
+//     doSave()
+//   },
+//   'Ctrl-S': () => {
+//     doSave()
+//   },
+// })
+
+// cm.on('cursorActivity', (instance) => {
+//   cursor = instance.getCursor().line
+// })
+
+cm.on('paste', async (ins, evt) => {
+  const { items } = evt.clipboardData || {}
+  if (items) {
+    /**
+     * Don't await, but allow premature return
+     */
+    Object.entries(items).map(async ([k, item]) => {
+      const cursor = ins.getCursor()
+
+      // if (process.env.NODE_ENV === 'development') {
+      //   if (item.kind === 'file') {
+      //     evt.preventDefault()
+      //     const blob = item.getAsFile()
+      //     const formData = new FormData()
+      //     formData.append('file', blob)
+      //     const { filename, url } = await fetch(
+      //       '/api/upload',
+      //       {
+      //         method: 'POST',
+      //         body: formData
+      //       }
+      //     ).then((r) => r.json())
+      //     ins.getDoc().replaceRange(`![${filename}](${url})`, cursor)
+      //     return
+      //   }
+      // }
+
+      item.getAsString(async (str) => {
+        if (/^https?:\/\/[^ ]+$/.test(str)) {
+          evt.preventDefault()
+          const xCardEl = document.createElement('x-card')
+          /**
+           * @type {HTMLAnchorElement}
+           */
+          const aEl = Object.assign(document.createElement('a'), {
+            href: str,
+            target: '_blank',
+            rel: 'noopener noreferrer',
+            innerText: str
+          })
+          xCardEl.appendChild(aEl)
+
+          const unloadedXCardElLength = xCardEl.outerHTML.length
+
+          ins.getDoc().replaceRange(xCardEl.outerHTML, cursor, {
+            line: cursor.line,
+            ch: cursor.ch + str.length,
+          })
+          const href = str
+          if (href) {
+            if (!urlMetadata.has(href)) {
+              urlMetadata.set(href, {})
+              const metadata = await fetch(`/.netlify/functions/metadata?href=${encodeURIComponent(href)}`, {
+                method: 'POST'
+              }).then((r) => r.json())
+              urlMetadata.set(href, metadata)
+            }
+
+            const meta = urlMetadata.get(href)
+            aEl.setAttribute('data-image', meta.image)
+            aEl.setAttribute('data-title', meta.title)
+            aEl.setAttribute('data-description', meta.description)
+
+            ins.getDoc().replaceRange(
+              xCardEl.outerHTML,
+              cursor,
+              {
+                line: cursor.line,
+                ch: cursor.ch + unloadedXCardElLength,
+              }
+            )
+          }
+        }
+      })
+    })
+  }
+})
+
+cm.setValue(example)

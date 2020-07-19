@@ -19,6 +19,10 @@ body {
   margin: 0.2rem;
 }
 
+#editor {
+  display: none;
+}
+
 #output {
   padding: 1rem;
   font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
@@ -33,7 +37,7 @@ body {
   box-sizing: border-box;
 }
 
-@media only screen and (max-width: 1000px) {
+@media only screen and (max-width: 800px) {
   .columns {
     grid-template-rows: 1fr 1fr;
     grid-template-columns: none;

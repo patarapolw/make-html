@@ -62,9 +62,7 @@ img {
 `
 
 export class XCard extends HTMLElement {
-  constructor() {
-    super()
-
+  connectedCallback() {
     const aEl = this.querySelector('a').cloneNode(true)
     if (aEl) {
       const href = aEl.href
