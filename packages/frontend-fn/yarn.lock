@@ -23,10 +23,10 @@
     chalk "^2.0.0"
     js-tokens "^4.0.0"
 
-"@patarapolw/highlightjs-vue@^1.0.0-dev4":
-  version "1.0.0-dev4"
-  resolved "https://registry.yarnpkg.com/@patarapolw/highlightjs-vue/-/highlightjs-vue-1.0.0-dev4.tgz#938c2cb037e2129601c0d9644eb5262eacde2013"
-  integrity sha512-p1LgqMO/uwk99u8PZ5AZPs/ITGa3qJzfjuEiof3IB5qEaguRW/0oLw88WC3l2V9BlaYjfDUmHEtiL2TZqW82pQ==
+"@patarapolw/highlightjs-vue@^1.0.0":
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/@patarapolw/highlightjs-vue/-/highlightjs-vue-1.0.0.tgz#5b132d50ae036b117e90afb6c2ea42a8b2777310"
+  integrity sha512-HjSwRw+liqvH9qs4UodjFBP0DZ/snytM9ktm4nqNT+Nou4QCYkC5fp7PyyLwD59T2OTlWaABGZdaoHrVrE9y3g==
 
 "@patarapolw/markdown-it-imsize@^2.0.1-dev3":
   version "2.0.1-dev3"
