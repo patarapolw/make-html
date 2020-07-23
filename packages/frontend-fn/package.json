@@ -20,7 +20,7 @@
     "@patarapolw/highlightjs-vue": "^1.0.0-dev4",
     "@patarapolw/markdown-it-imsize": "^2.0.1-dev3",
     "dompurify": "^2.0.11",
-    "highlight.js": "~10.0",
+    "highlight.js": "~10.1.1",
     "hyperpug": "^1.5.3",
     "markdown-it": "^11.0.0",
     "markdown-it-container": "^3.0.0",
