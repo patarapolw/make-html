@@ -28,10 +28,10 @@
   resolved "https://registry.yarnpkg.com/@patarapolw/highlightjs-vue/-/highlightjs-vue-1.0.0-dev4.tgz#938c2cb037e2129601c0d9644eb5262eacde2013"
   integrity sha512-p1LgqMO/uwk99u8PZ5AZPs/ITGa3qJzfjuEiof3IB5qEaguRW/0oLw88WC3l2V9BlaYjfDUmHEtiL2TZqW82pQ==
 
-"@patarapolw/markdown-it-imsize@^2.0.1-dev3":
-  version "2.0.1-dev3"
-  resolved "https://registry.yarnpkg.com/@patarapolw/markdown-it-imsize/-/markdown-it-imsize-2.0.1-dev3.tgz#b79d5c002d344086a7abae1260fd192529bd1134"
-  integrity sha512-79FT44wD1vukfF+QJg5FMghCS/ZDy8qUR3cHoLpT1i9H0vg8w260thuVP1TZxc6RRw10RFi1MXBdhB5HEWZcOw==
+"@patarapolw/markdown-it-imsize@^2.0.1":
+  version "2.0.1"
+  resolved "https://registry.yarnpkg.com/@patarapolw/markdown-it-imsize/-/markdown-it-imsize-2.0.1.tgz#aa3755a3fec0c4d997523c04fbdc1b33a639c479"
+  integrity sha512-WpR/jrXbOIDG4pW3Fe/XIIRgbJmB4BG4zKVRXx0LIM5NPKCE1oRJ8EoR89sHbkRk3sT2Cb4L4EgapfgM2Q9qIQ==
 
 "@types/color-name@^1.1.1":
   version "1.1.1"

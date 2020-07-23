@@ -18,7 +18,7 @@
   },
   "dependencies": {
     "@patarapolw/highlightjs-vue": "^1.0.0-dev4",
-    "@patarapolw/markdown-it-imsize": "^2.0.1-dev3",
+    "@patarapolw/markdown-it-imsize": "^2.0.1",
     "dompurify": "^2.0.11",
     "highlight.js": "~10.0",
     "hyperpug": "^1.5.3",
