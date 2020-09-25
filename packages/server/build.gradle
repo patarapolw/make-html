@@ -1,0 +1,37 @@
+buildscript {
+    ext.exposedVersion = '0.27.1'
+}
+
+plugins {
+    id 'org.jetbrains.kotlin.jvm' version '1.3.72'
+    id 'com.github.johnrengelman.shadow' version '6.0.0'
+    id 'application'
+}
+
+repositories {
+    jcenter()
+    maven { url 'https://jitpack.io' }
+}
+
+dependencies {
+    // Align versions of all Kotlin components
+    implementation platform('org.jetbrains.kotlin:kotlin-bom')
+
+    implementation 'org.jetbrains.kotlin:kotlin-stdlib-jdk8'
+    implementation 'io.javalin:javalin:3.10.1'
+    implementation 'org.slf4j:slf4j-simple:1.8.0-beta4'
+    implementation 'com.github.guepardoapps:kulid:1.1.2.0'
+    implementation "org.jetbrains.exposed:exposed-core:$exposedVersion"
+    implementation "org.jetbrains.exposed:exposed-dao:$exposedVersion"
+    implementation "org.jetbrains.exposed:exposed-jdbc:$exposedVersion"
+    implementation 'org.xerial:sqlite-jdbc:3.32.3.2'
+    implementation group: 'com.google.code.gson', name: 'gson', version: '2.8.6'
+    implementation 'com.github.salomonbrys.kotson:kotson:2.5.0'
+
+    testImplementation 'org.jetbrains.kotlin:kotlin-test'
+    testImplementation 'org.jetbrains.kotlin:kotlin-test-junit'
+}
+
+application {
+    mainClassName = 'makehtml.AppKt'
+}
