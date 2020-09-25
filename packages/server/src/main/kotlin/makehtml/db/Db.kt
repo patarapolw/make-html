@@ -1,12 +1,8 @@
 package makehtml.db
 
-import org.jetbrains.exposed.sql.Database
-import org.jetbrains.exposed.sql.SchemaUtils
-import org.jetbrains.exposed.sql.transactions.transaction
-import org.jetbrains.exposed.sql.transactions.transactionManager
+import org.sql2o.Sql2o
 import java.io.File
 import java.nio.file.Paths
-import java.sql.ResultSet
 
 class Db(dbString: String) {
     val isJar = Db::class.java.getResource("Db.class").toString().startsWith("jar:")
@@ -16,48 +12,59 @@ class Db(dbString: String) {
         File(System.getProperty("user.dir"))
     }
 
-    val db = Database.connect(
-            url = "jdbc:sqlite:${Paths.get(root.toString(), dbString).toUri().path}",
-            driver = "org.sqlite.JDBC",
-            user = "",
-            password = ""
-    )
-
-    fun <T:Any>exec(
-            stmt: String,
-            // args: Iterable<Pair<ColumnType, Any?>>, // safeString = unsafeString.Replace("'","''");
-            transform: (ResultSet) -> T
-    ): List<T> {
-        val result = arrayListOf<T>()
-        db.transactionManager.currentOrNull()?.exec(stmt) { rs ->
-            while (rs.next()) {
-                result += transform(rs)
-            }
-        }
-        return result.toList()
-    }
+    val sql2o = Sql2o("jdbc:sqlite:${let {
+        Paths.get(root.toString(), dbString).toUri().path
+    }}",
+            null, null)
 
     init {
-        transaction(db) {
-            val tables = arrayOf(
-                    EntryTable
-            )
-
-            if (db.dialect.allTablesNames().isEmpty()) {
-                SchemaUtils.create(*tables)
-                tables.map {
-                    it.init()
-                }
-            }
-
-            exec("""
-                CREATE VIRTUAL TABLE IF NOT EXISTS `search` USING FTS5 (
+        sql2o.open().let { connection ->
+            connection.createQuery("""
+                CREATE VIRTUAL TABLE IF NOT EXISTS `entry` USING fts5 (
+                    `id`    UNINDEXED,
                     `title`,
                     `tag`,
-                    `excerpt`,
-                    `id` UNINDEXED
+                    `markdown`,
+                    `html`  UNINDEXED,
+                    `date`  UNINDEXED,
+                    `data`  UNINDEXED /* json */
                 )
-            """.trimIndent()) {}
+            """.trimIndent()).executeUpdate()
+
+            connection.createQuery("""
+                CREATE TABLE IF NOT EXISTS `media` (
+                    `id`        TEXT PRIMARY KEY,
+                    `name`      TEXT NOT NULL,
+                    `data`      BLOB NOT NULL,
+                    `h`         TEXT NOT NULL,
+                    `width`     INTEGER NOT NULL,
+                    `height`    INTEGER NOT NULL
+                )
+            """.trimIndent()).executeUpdate()
+
+            connection.createQuery("""
+                CREATE INDEX IF NOT EXISTS `media_name` ON `media`(`name`)
+            """.trimIndent()).executeUpdate()
+
+            connection.createQuery("""
+                CREATE INDEX IF NOT EXISTS `media_h` ON `media`(`h`)
+            """.trimIndent()).executeUpdate()
+
+            connection.createQuery("""
+                CREATE INDEX IF NOT EXISTS `media_width` ON `media`(`width`)
+            """.trimIndent()).executeUpdate()
+
+            connection.createQuery("""
+                CREATE INDEX IF NOT EXISTS `media_height` ON `media`(`height`)
+            """.trimIndent()).executeUpdate()
+
+            connection.createQuery("""
+                CREATE TABLE IF NOT EXISTS `entry_media` (
+                    `entry_id`  TEXT NOT NULL REFERENCES `entry`(`id`) ON DELETE CASCADE,
+                    `media_id`  TEXT NOT NULL REFERENCES `media`(`id`) ON DELETE CASCADE,
+                    PRIMARY KEY (`entry_id`, `media_id`)
+                )
+            """.trimIndent()).executeUpdate()
         }
     }
 }

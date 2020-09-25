@@ -1,8 +1,9 @@
 package makehtml
 
 import io.javalin.Javalin
-import io.javalin.apibuilder.ApiBuilder
+import io.javalin.apibuilder.ApiBuilder.*
 import makehtml.api.Api
+import makehtml.api.MediaController
 
 fun main(args: Array<String>) {
     val app = Javalin.create {
@@ -11,10 +12,11 @@ fun main(args: Array<String>) {
         } else {
             it.enableCorsForAllOrigins()
         }
-    }.start(System.getenv("PORT")?.toInt() ?: 8080)
+    }.start(System.getenv("PORT")?.toInt() ?: 24000)
 
     app.routes {
-        ApiBuilder.path("api", Api.router)
+        path("api", Api.router)
+        get("media/:id.png", MediaController::getOne)
     }
 
     if (!Api.db.isJar) {
