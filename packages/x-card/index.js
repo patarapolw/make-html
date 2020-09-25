@@ -1,3 +1,4 @@
+// @ts-check
 const template = document.createElement('template')
 template.innerHTML = /*html*/`
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/normalize.css@8.0.1/normalize.css">
@@ -62,12 +63,21 @@ img {
 `
 
 export class XCard extends HTMLElement {
-  connectedCallback() {
+  async connectedCallback() {
+    // Await a little for incremental dom to load
+    await new Promise((resolve) => setTimeout(resolve, 50))
+
     /**
-     * @type {HTMLAnchorElement}
-     */
-    const aEl = this.querySelector('a').cloneNode(true)
-    if (aEl) {
+    * @type {HTMLElement & {
+    *  ondatasrc: (function(string, HTMLImageElement): void) | null;
+    *  isresized?: boolean;
+    * }}
+    */
+    // @ts-ignore
+    const self = this
+
+    const aEl = /** @type {HTMLAnchorElement} */ (this.querySelector('a').cloneNode(true))
+    if (aEl && aEl.textContent) {
       aEl.target = '_blank'
 
       const href = aEl.href
@@ -80,18 +90,51 @@ export class XCard extends HTMLElement {
       aEl.appendChild(template.content.cloneNode(true))
 
       if (image) {
-        aEl.querySelector('.figure').style.display = 'flex'
+        /** @type {HTMLDivElement} */ (aEl.querySelector('.figure')).style.display = 'flex'
 
-        Object.assign(aEl.querySelector('img'), {
+        const imgEl = aEl.querySelector('img')
+        imgEl.crossOrigin = 'anonymous'
+
+        const canvasEl = document.createElement('canvas')
+
+        imgEl.onload = () => {
+          canvasEl.width = imgEl.naturalWidth > 100
+            ? 100
+            : imgEl.naturalWidth
+          canvasEl.height = imgEl.naturalWidth > 100
+            ? imgEl.naturalHeight * 100 / imgEl.naturalWidth
+            : imgEl.naturalHeight
+
+          canvasEl.getContext('2d').drawImage(
+            imgEl,
+            0,
+            0,
+            canvasEl.width,
+            canvasEl.height
+          )
+
+          imgEl.onload = null
+          imgEl.src = canvasEl.toDataURL('image/png')
+
+          if (self.ondatasrc && !self.isresized) {
+            self.isresized = true
+            self.ondatasrc(imgEl.src, imgEl)
+          }
+
+          canvasEl.remove()
+          imgEl.removeAttribute('crossorigin')
+        }
+
+        Object.assign(imgEl, {
           src: image,
           alt: title || href
         })
       }
 
-      aEl.querySelector('.header').innerText = title || href
+      /** @type {HTMLDivElement} */ (aEl.querySelector('.header')).innerText = title || href
 
       if (description) {
-        const descEl = aEl.querySelector('.description')
+        const descEl = /** @type {HTMLDivElement} */ (aEl.querySelector('.description'))
         descEl.innerText = description
         descEl.style.display = 'block'
       }

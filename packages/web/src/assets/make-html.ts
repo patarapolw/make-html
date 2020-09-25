@@ -2,6 +2,7 @@ import { hljsRegisterVue } from '@patarapolw/highlightjs-vue'
 import imsize from '@patarapolw/markdown-it-imsize'
 import hljs from 'highlight.js'
 import HyperPug from 'hyperpug'
+import { patch } from 'incremental-dom'
 import MarkdownIt from 'markdown-it'
 import mdContainer from 'markdown-it-container'
 import emoji from 'markdown-it-emoji'
@@ -9,6 +10,7 @@ import externalLinks from 'markdown-it-external-links'
 import { unescapeAll } from 'markdown-it/lib/common/utils'
 import scopeCss from 'scope-css'
 
+import { makeIncremental } from './incremental'
 import { matter } from './matter'
 
 hljsRegisterVue(hljs)
@@ -16,8 +18,6 @@ hljsRegisterVue(hljs)
 export class MakeHtml {
   private md: MarkdownIt
   private hp: HyperPug
-
-  private html = ''
 
   constructor (public id = Math.random().toString(36)) {
     this.id = 'el-' + hashFnv32a(this.id)
@@ -77,24 +77,14 @@ export class MakeHtml {
     })
   }
 
-  /**
-   * This should be the only method that requires browser
-   */
-  render (s: string) {
+  render (s: string, dom: HTMLElement) {
     try {
-      const body = document.createElement('body')
+      const body = document.createElement('div')
+      body.className = `.${this.id}`
       body.innerHTML = this._mdConvert(matter.split(s).content)
 
       body.querySelectorAll('style').forEach((el) => {
         el.innerHTML = scopeCss(el.innerHTML, `.${this.id}`)
-      })
-
-      body.querySelectorAll('iframe').forEach((el) => {
-        const w = el.width
-        const h = el.height
-
-        el.style.width = w ? `${w}px` : ''
-        el.style.height = h ? `${h}px` : ''
       })
 
       body.querySelectorAll('pre code').forEach((el) => {
@@ -105,10 +95,21 @@ export class MakeHtml {
         el.setAttribute('loading', 'lazy')
       })
 
-      this.html = `<div class="${this.id}">${body.innerHTML}</div>`
-    } catch (_) {}
+      patch(dom, makeIncremental(body.outerHTML))
 
-    return this.html
+      dom.querySelectorAll('x-card').forEach((el) => {
+        const el0 = (el as HTMLElement & {
+          ondatasrc: (datasrc: string, imgEl: HTMLImageElement) => void;
+          isresized?: boolean;
+        })
+
+        if (!el0.isresized) {
+          el0.ondatasrc = (d, el) => {
+            console.log(d, el)
+          }
+        }
+      })
+    } catch (_) {}
   }
 
   private _pugConvert (s: string) {

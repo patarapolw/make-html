@@ -37,7 +37,7 @@
         <article v-show="isEditor" class="editor">
           <codemirror ref="cm" />
         </article>
-        <article v-show="isViewer" class="viewer content" v-html="html" />
+        <article v-show="isViewer" class="viewer content" ref="viewer" />
       </section>
     </section>
   </mwc-drawer>

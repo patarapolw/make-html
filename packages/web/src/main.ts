@@ -1,3 +1,4 @@
+import '@patarapolw/make-html-x-card'
 import '@webcomponents/webcomponentsjs/webcomponents-loader'
 import 'normalize.css/normalize.css'
 

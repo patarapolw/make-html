@@ -10,16 +10,20 @@ importers:
       '@material/mwc-textfield': 0.18.0
       '@material/mwc-top-app-bar': 0.18.0
       '@patarapolw/highlightjs-vue': 1.0.0-dev4_highlight.js@10.2.0
+      '@patarapolw/make-html-x-card': 'link:../x-card'
       '@patarapolw/markdown-it-imsize': 2.0.1-dev3
       '@types/codemirror': 0.0.98
       '@types/highlight.js': 9.12.4
       '@types/js-yaml': 3.12.5
       '@types/markdown-it': 10.0.2
       '@webcomponents/webcomponentsjs': 2.4.4
+      any-serialize: 1.4.12
       codemirror: 5.58.1
       core-js: 3.6.5
       highlight.js: 10.2.0
+      htmlparser2: 4.1.0
       hyperpug: 1.5.3
+      incremental-dom: 0.7.0
       js-yaml: 3.14.0
       markdown-it: 11.0.1
       markdown-it-container: 3.0.0
@@ -59,6 +63,7 @@ importers:
       '@material/mwc-textfield': ^0.18.0
       '@material/mwc-top-app-bar': ^0.18.0
       '@patarapolw/highlightjs-vue': ^1.0.0-dev4
+      '@patarapolw/make-html-x-card': '*'
       '@patarapolw/markdown-it-imsize': ^2.0.1-dev3
       '@types/codemirror': ^0.0.98
       '@types/highlight.js': ^9.12.4
@@ -74,6 +79,7 @@ importers:
       '@vue/eslint-config-standard': ^5.1.2
       '@vue/eslint-config-typescript': ^5.0.2
       '@webcomponents/webcomponentsjs': ^2.4.4
+      any-serialize: ^1.4.12
       codemirror: ^5.58.1
       core-js: ^3.6.5
       eslint: ^6.7.2
@@ -83,8 +89,10 @@ importers:
       eslint-plugin-standard: ^4.0.0
       eslint-plugin-vue: ^6.2.2
       highlight.js: ^10.2.0
+      htmlparser2: ^4.1.0
       hyperpug: ^1.5.3
       import-sort-parser-typescript: ^6.0.0
+      incremental-dom: ^0.7.0
       js-yaml: ^3.14.0
       markdown-it: ^11.0.1
       markdown-it-container: ^3.0.0
@@ -2450,6 +2458,12 @@ packages:
     dev: true
     resolution:
       integrity: sha1-q8av7tzqUugJzcA3au0845Y10X8=
+  /any-serialize/1.4.12:
+    dev: false
+    engines:
+      yarn: 1.x
+    resolution:
+      integrity: sha512-cN5qx3w1GD8DLVvpGz7sCL44HGMxJdCkyoEyNe3jO8da3cOLL8Auy5lTip4Oy1SWAoftjvrsdnAg0bOkPcWM+Q==
   /anymatch/2.0.0:
     dependencies:
       micromatch: 3.1.10
@@ -4060,6 +4074,14 @@ packages:
     dev: true
     resolution:
       integrity: sha512-2/xPb3ORsQ42nHYiSunXkDjPLBaEj/xTwUO4B7XCZQTRk7EBtTOPaygh10YAAh2OI1Qrp6NWfpAhzswj0ydt9g==
+  /dom-serializer/1.1.0:
+    dependencies:
+      domelementtype: 2.0.2
+      domhandler: 3.1.0
+      entities: 2.0.3
+    dev: false
+    resolution:
+      integrity: sha512-ox7bvGXt2n+uLWtCRLybYx60IrOlWL/aCebWJk1T0d4m3y2tzf4U3ij9wBMUb6YJZpz06HCCYuyCDveE2xXmzQ==
   /domain-browser/1.2.0:
     dev: true
     engines:
@@ -4072,7 +4094,6 @@ packages:
     resolution:
       integrity: sha512-BSKB+TSpMpFI/HOxCNr1O8aMOTZ8hT3pM3GQ0w/mWRmkhEDSFJkkyzz4XQsBV44BChwGkrDfMyjVD0eA2aFV3w==
   /domelementtype/2.0.2:
-    dev: true
     resolution:
       integrity: sha512-wFwTwCVebUrMgGeAwRL/NhZtHAUyT9n9yg4IMDwf10+6iCMxSkVq9MGCVEH+QZWo1nNidy8kNvwmv4zWHDTqvA==
   /domhandler/2.4.2:
@@ -4081,6 +4102,14 @@ packages:
     dev: true
     resolution:
       integrity: sha512-JiK04h0Ht5u/80fdLMCEmV4zkNh2BcoMFBmZ/91WtYZ8qVXSKjiw7fXMgFPnHcSZgOo3XdinHvmnDUeMf5R4wA==
+  /domhandler/3.1.0:
+    dependencies:
+      domelementtype: 2.0.2
+    dev: false
+    engines:
+      node: '>= 4'
+    resolution:
+      integrity: sha512-kZFobjdGafS1wknD9t0Ft+NazYYDxXNbcjqQ5z43xTq2FC1NT0U2QjgAmfc0C1urfeGDOAN2xzcKjifSbBpywg==
   /domutils/1.5.1:
     dependencies:
       dom-serializer: 0.2.2
@@ -4095,6 +4124,14 @@ packages:
     dev: true
     resolution:
       integrity: sha512-Lgd2XcJ/NjEw+7tFvfKxOzCYKZsdct5lczQ2ZaQY8Djz7pfAD3Gbp8ySJWtreII/vDlMVmxwa6pHmdxIYgttDg==
+  /domutils/2.4.0:
+    dependencies:
+      dom-serializer: 1.1.0
+      domelementtype: 2.0.2
+      domhandler: 3.1.0
+    dev: false
+    resolution:
+      integrity: sha512-rP+tl0A3YekdmSpYOEtm4C/aSzwtEOU5XrkdoGwb+Hn/941f5S5kZwHr37AEIcBbPug3uxD8z9PKQZd1R/R/tg==
   /dot-prop/5.3.0:
     dependencies:
       is-obj: 2.0.0
@@ -5521,6 +5558,15 @@ packages:
     dev: true
     resolution:
       integrity: sha512-IgieNijUMbkDovyoKObU1DUhm1iwNYE/fuifEoEHfd1oZKZDaONBSkal7Y01shxsM49R4XaMdGez3WnF9UfiCQ==
+  /htmlparser2/4.1.0:
+    dependencies:
+      domelementtype: 2.0.2
+      domhandler: 3.1.0
+      domutils: 2.4.0
+      entities: 2.0.3
+    dev: false
+    resolution:
+      integrity: sha512-4zDq1a1zhE4gQso/c5LP1OtrhYTncXNSpvJYtWJBtXAETPlMfi3IFNjGuQbYLuVY4ZR0QMqRVvo4Pdy9KLyP8Q==
   /http-deceiver/1.2.7:
     dev: true
     resolution:
@@ -5710,6 +5756,10 @@ packages:
       node: '>=0.8.19'
     resolution:
       integrity: sha1-khi5srkoojixPcT7a21XbyMUU+o=
+  /incremental-dom/0.7.0:
+    dev: false
+    resolution:
+      integrity: sha512-SBHQ6AiCmtwh7TU9hjq2CspasJe7ggGa9k+qYZft+d5Qq9v7V+07wlnRSZH5GGYjI8wn6U5p7dDua7f1bih52g==
   /indent-string/4.0.0:
     dev: true
     engines:

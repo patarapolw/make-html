@@ -13,6 +13,7 @@ import { Component, Vue } from 'vue-property-decorator'
     })
     this.codemirror.on('change', (cm) => {
       this.markdown = cm.getValue()
+      this.makeHtml.render(this.markdown, this.$refs.viewer as HTMLElement)
     })
 
     const elList = this.$refs.list as HTMLElement & {
@@ -61,10 +62,6 @@ export default class App extends Vue {
     return new MakeHtml(this.filename)
   }
 
-  get html () {
-    return this.makeHtml.render(this.markdown)
-  }
-
   toggle () {
     this.isViewer = !this.isViewer
   }
@@ -88,7 +85,7 @@ export default class App extends Vue {
         clearTimeout(this.tmFilenameSetter)
       }
 
-      this.tmFilenameSetter = setTimeout(() => {
+      this.tmFilenameSetter = window.setTimeout(() => {
         this.filelist = [
           ...this.filelist.slice(0, this.filelistIndex),
           this.filename,

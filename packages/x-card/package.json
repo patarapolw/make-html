@@ -10,7 +10,7 @@
   "repository": "git@github.com:patarapolw/make-html.git",
   "author": "Pacharapol Withayasakpunt <polv@polv.cc>",
   "scripts": {
-    "start": "webpack-dev-server"
+    "dev": "webpack-dev-server"
   },
   "devDependencies": {
     "import-sort-parser-typescript": "^6.0.0",
