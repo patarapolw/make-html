@@ -1,4 +1,7 @@
-import './plugins/buefy'
+import '@webcomponents/webcomponentsjs/webcomponents-loader'
+import 'normalize.css/normalize.css'
+
+import './plugins/material'
 import './plugins/codemirror'
 import './index.css'
 
