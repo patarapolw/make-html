@@ -5,6 +5,7 @@ import io.javalin.apibuilder.ApiBuilder.get
 import io.javalin.apibuilder.ApiBuilder.path
 import io.javalin.apibuilder.EndpointGroup
 import makehtml.db.Db
+import java.io.InputStream
 import java.net.URL
 
 object Api {
@@ -17,7 +18,7 @@ object Api {
 
         get("scrape") { ctx ->
             val url = URL(ctx.queryParam<String>("url").get())
-            ctx.result(url.content as String)
+            ctx.result(url.content as InputStream)
         }
     }
 }

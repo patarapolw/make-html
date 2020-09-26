@@ -1,5 +1,6 @@
 import { hljsRegisterVue } from '@patarapolw/highlightjs-vue'
 import imsize from '@patarapolw/markdown-it-imsize'
+import axios from 'axios'
 import hljs from 'highlight.js'
 import HyperPug from 'hyperpug'
 import { patch } from 'incremental-dom'
@@ -104,8 +105,15 @@ export class MakeHtml {
         })
 
         if (!el0.isresized) {
-          el0.ondatasrc = (d, el) => {
-            console.log(d, el)
+          el0.ondatasrc = async (d, el) => {
+            const fd = new FormData()
+            fd.append('file', dataURItoBlob(d))
+
+            const { data } = await axios.post<{
+              id: string;
+            }>('/api/media/upload', fd)
+
+            el.src = `/media/${data.id}.png`
           }
         }
       })
@@ -159,10 +167,17 @@ function getIndent (s: string) {
 }
 
 export function stripIndent (s: string, indent = getIndent(s)) {
-  console.log(s)
-
   return s
     .split('\n')
     .map((r) => r.replace(new RegExp(`^ {1,${indent}}`), ''))
     .join('\n')
+}
+
+function dataURItoBlob (datauri: string) {
+  const arr = datauri.split(','); const mime = (arr[0].match(/:(.*?);/) || [])[1]
+  const bstr = atob(arr[1]); let n = bstr.length; const u8arr = new Uint8Array(n)
+  while (n--) {
+    u8arr[n] = bstr.charCodeAt(n)
+  }
+  return new Blob([u8arr], { type: mime })
 }

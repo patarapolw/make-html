@@ -4,28 +4,85 @@ import com.github.guepardoapps.kulid.ULID
 import io.javalin.apibuilder.ApiBuilder.*
 import io.javalin.apibuilder.EndpointGroup
 import io.javalin.http.Context
+import org.sql2o.Sql2oException
+import java.sql.Connection
 
 object EntryController {
     val router = EndpointGroup {
         get(this::getOne)
+        get("q", this::query)
         put(this::create)
         patch(this::updateOne)
         patch("title", this::updateTitle)
         delete(this::deleteOne)
     }
 
+    private data class GetResult(
+            val title: String,
+            val markdown: String
+    )
+
     private fun getOne(ctx: Context) {
         val id = ctx.queryParam<String>("id").get()
-        val markdown = Api.db.sql2o.open().createQuery("""
-            SELECT `markdown`
+        val result = Api.db.sql2o.open().createQuery("""
+            SELECT `title`, `markdown`
             FROM `entry`
             WHERE `id` = :id
         """.trimIndent())
                 .addParameter("id", id)
-                .executeScalar(String::class.java)
+                .executeAndFetchFirst(GetResult::class.java)
+
+        ctx.json(result ?: mapOf<String, Any>())
+    }
+
+    private data class QueryEntry(
+            val id: String,
+            val title: String
+    )
+
+    private fun query(ctx: Context) {
+        val q = ctx.queryParam<String>("q").getOrNull() ?: ""
+        val after = ctx.queryParam<String>("after").getOrNull()
+        val limit = ctx.queryParam<Int>("limit").getOrNull() ?: 20
+
+        var sql = Api.db.sql2o.open().createQuery("""
+            SELECT `id`, `title`
+            FROM `entry`
+            WHERE
+                ${after?.let { "`id` < :after AND" } ?: ""}
+                ${if (q.isNotBlank()) { "`entry` MATCH :q AND" } else ""}
+                TRUE
+            ORDER BY `id` DESC
+            LIMIT $limit
+        """.trimIndent())
+
+        var countSql = Api.db.sql2o.open().createQuery("""
+            SELECT COUNT(*) FROM `entry`
+            WHERE
+                ${if (q.isNotBlank()) { "`entry` MATCH :q AND" } else ""}
+                TRUE
+        """.trimIndent())
+
+        after?.let {
+            sql = sql.addParameter("after", after)
+        }
+
+        if (q.isNotBlank()) {
+            sql = sql.addParameter("q", q)
+            countSql = countSql.addParameter("q", q)
+        }
+
+        try {
+            ctx.json(mapOf(
+                    "result" to sql.executeAndFetch(QueryEntry::class.java),
+                    "count" to countSql.executeScalar(Int::class.java)
+            ))
+            return
+        } catch (e: Sql2oException) {}
 
         ctx.json(mapOf(
-                "markdown" to markdown
+                "result" to listOf<Any>(),
+                "count" to 0
         ))
     }
 
@@ -43,7 +100,8 @@ object EntryController {
         val body = ctx.bodyValidator(CreateReq::class.java).get()
         val id = ULID.random()
 
-        Api.db.sql2o.beginTransaction().let { connection ->
+        Api.db.sql2o.beginTransaction(Connection.TRANSACTION_SERIALIZABLE)
+                .let { connection ->
             connection.createQuery("""
                 INSERT INTO `entry` (
                     `id`,
@@ -75,6 +133,7 @@ object EntryController {
                         .addParameter("mediaId", it)
                         .executeUpdate()
             }
+                    connection.commit()
         }
 
         ctx.status(201).json(mapOf(
@@ -95,7 +154,8 @@ object EntryController {
         val body = ctx.bodyValidator(UpdateReq::class.java).get()
         val id = ctx.queryParam<String>("id").get()
 
-        Api.db.sql2o.beginTransaction().let { connection ->
+        Api.db.sql2o.beginTransaction(Connection.TRANSACTION_SERIALIZABLE)
+                .let { connection ->
             connection.createQuery("""
                 UPDATE `entry`
                 SET
@@ -131,10 +191,14 @@ object EntryController {
                     DELETE FROM `entry_media`
                     WHERE
                         `entry_id` = :entryId AND
-                        `media_id` IN (${obsoleteMedia.map { ":$it" }.joinToString(",")})
+                        `media_id` IN (${obsoleteMedia
+                        .mapIndexed { i, _ -> ":m$i" }
+                        .joinToString(",")})
                 """.trimIndent())
                         .addParameter("entryId", id)
-                obsoleteMedia.forEach { q = q.addParameter(":$it", it) }
+                obsoleteMedia.forEachIndexed { i, el ->
+                    q = q.addParameter(":m$i", el)
+                }
                 q.executeUpdate()
             }
 
@@ -148,6 +212,8 @@ object EntryController {
                         .addParameter("mediaId", it)
                         .executeUpdate()
             }
+
+                    connection.commit()
         }
 
         ctx.status(201).result("Updated")

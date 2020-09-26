@@ -8,13 +8,15 @@ declare module 'scope-css' {
   export = scopeCss;
 }
 
-declare module 'pretty' {
-  function pretty(html: string, opts?: {
-    ocd?: boolean;
-  }): string;
-  export = pretty;
-}
-
 declare module 'page-metadata-parser' {
-  export function getMetadata(doc: Document, url: string): string;
+  export function getMetadata(doc: HTMLElement, url: string): {
+    description?: string;
+    icon: string;
+    image?: string;
+    keywords?: string;
+    provider: string;
+    title?: string;
+    type?: string;
+    url: string;
+  };
 }

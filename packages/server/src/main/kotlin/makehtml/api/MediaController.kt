@@ -4,17 +4,19 @@ import com.github.guepardoapps.kulid.ULID
 import io.javalin.apibuilder.ApiBuilder.post
 import io.javalin.apibuilder.EndpointGroup
 import io.javalin.http.Context
+import java.io.ByteArrayOutputStream
 import java.math.BigInteger
 import java.security.MessageDigest
 import javax.imageio.ImageIO
 
 object MediaController {
     val router = EndpointGroup {
-        post(this::upload)
+        post("upload", this::upload)
     }
 
     fun getOne(ctx: Context) {
-        val id = ctx.pathParam<String>("id").get()
+        val name = ctx.pathParam<String>("name").get()
+        val id = name.split('.').first()
 
         val data = Api.db.sql2o.open().createQuery("""
             SELECT `data`
@@ -30,13 +32,17 @@ object MediaController {
     private fun upload(ctx: Context) {
         val data = ctx.uploadedFile("file")!!
 
-        val b = data.content.readAllBytes()
-        val bimg = ImageIO.read(data.content)
-        val width = bimg.width
-        val height = bimg.height
+        val bImg = ImageIO.read(data.content)
+        val width = bImg.width
+        val height = bImg.height
+
+        val stream = ByteArrayOutputStream()
+        ImageIO.write(bImg, "png", stream)
+        val b = stream.toByteArray()
+
         val h = let {
             val digest = MessageDigest
-                    .getInstance("sha256")
+                    .getInstance("SHA-256")
                     .digest(b)
             val hexString: StringBuilder = StringBuilder(BigInteger(1, digest)
                     .toString(16))
@@ -68,8 +74,8 @@ object MediaController {
                         `width`, `height`, `h`
                     ) VALUES (
                         :id,
-                        :title, :tag, :markdown,
-                        :html, :date, :data
+                        :name, :data,
+                        :width, :height, :h
                     )
                 """.trimIndent())
                         .addParameter("id", id)

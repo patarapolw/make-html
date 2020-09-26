@@ -3,13 +3,20 @@
     <div class="d-grid drawer">
       <mwc-textfield
         label="Search" iconTrailing="search"
+        :value="q" @input="q = $event.target.value"
+        @keydown.enter="doQuery"
       />
       <mwc-list activatable rootTabbable ref="list">
         <mwc-list-item
-          v-for="(name, i) in filelist"
-          :key="i"
-          @request-selected="filename = name"
-        > {{ name }} </mwc-list-item>
+          hasMeta
+          v-for="el in filelist"
+          :key="el.id"
+          @request-selected="loadFile(el.id)"
+        >
+          {{ el.title }}
+          <mwc-icon class="deleteFile"
+            slot="meta" @click="deleteFile(el.id)">delete</mwc-icon>
+        </mwc-list-item>
       </mwc-list>
     </div>
 
@@ -19,14 +26,22 @@
           icon="menu"
           @click="$el.open = !$el.open"
         />
-        <div slot="title">
+        <div slot="title" :class="id ? '' : 'is-new'">
           <input class="no-formatting"
-            v-model="filename" type="text"
-            @keydown="validateFilename"
+            v-model="title" type="text"
+            @keydown.enter="() => false"
+            @blur="setTitle"
           />
         </div>
         <mwc-button slot="actionItems" raised
+          label="New"
+          @click="newFile"
+          :disabled="!id"
+        />
+        <mwc-button slot="actionItems" raised
           label="Save"
+          @click="saveFile"
+          :disabled="!isEdited"
         />
         <mwc-button slot="actionItems" raised
           label="Toggle"
@@ -74,6 +89,10 @@ mwc-button + mwc-button {
   margin-left: 1rem;
 }
 
+mwc-button[label="New"] {
+  --mdc-theme-primary: rgb(255, 105, 19);
+}
+
 mwc-button[label="Save"] {
   --mdc-theme-primary: rgb(66, 123, 255);
 }
@@ -84,6 +103,12 @@ mwc-button[label="Toggle"] {
 
 .viewer {
   padding: 1rem;
+  padding-bottom: 100px;
+  overflow: scroll;
+}
+
+.viewer >>> img {
+  max-width: 100%;
 }
 
 .is-split-2 {
@@ -98,7 +123,24 @@ mwc-button[label="Toggle"] {
   overflow-y: scroll;
 }
 
+.editor, .viewer {
+  height: calc(100vh - 60px);
+  box-sizing: border-box;
+}
+
 input.no-formatting {
   all: unset;
+}
+
+mwc-icon.deleteFile {
+  filter: contrast(0.1);
+}
+
+mwc-icon.deleteFile:hover {
+  filter: initial;
+}
+
+.is-new {
+  filter: contrast(0.1);
 }
 </style>

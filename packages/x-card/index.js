@@ -85,7 +85,7 @@ export class XCard extends HTMLElement {
       const title = aEl.getAttribute('data-title')
       const description = aEl.getAttribute('data-description')
 
-      const shadow = this.attachShadow({ mode: 'closed' })
+      const shadow = this.attachShadow({ mode: 'open' })
       aEl.textContent = ''
       aEl.appendChild(template.content.cloneNode(true))
 

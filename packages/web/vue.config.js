@@ -6,5 +6,12 @@ module.exports = {
   configureWebpack (config) {
     config.resolve.extensions.unshift('.vue')
   },
-  outputDir: path.resolve('../server/src/main/resources/public')
+  outputDir: path.resolve('../server/src/main/resources/public'),
+  devServer: {
+    proxy: {
+      '^/(api|media)/': {
+        target: 'http://localhost:24000'
+      }
+    }
+  }
 }
