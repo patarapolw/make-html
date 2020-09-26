@@ -133,7 +133,7 @@ input.no-formatting {
 }
 
 mwc-icon.deleteFile {
-  filter: contrast(0.1);
+  filter: brightness(3);
 }
 
 mwc-icon.deleteFile:hover {
@@ -141,6 +141,7 @@ mwc-icon.deleteFile:hover {
 }
 
 .is-new {
-  filter: contrast(0.1);
+  filter: brightness(3);
+  font-style: italic;
 }
 </style>

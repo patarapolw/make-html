@@ -100,21 +100,43 @@ export class MakeHtml {
 
       dom.querySelectorAll('x-card').forEach((el) => {
         const el0 = (el as HTMLElement & {
-          ondatasrc: (datasrc: string, imgEl: HTMLImageElement) => void;
-          isresized?: boolean;
+          onimg: (imgEl: HTMLImageElement) => void;
         })
 
-        if (!el0.isresized) {
-          el0.ondatasrc = async (d, el) => {
-            const fd = new FormData()
-            fd.append('file', dataURItoBlob(d))
-
-            const { data } = await axios.post<{
-              id: string;
-            }>('/api/media/upload', fd)
-
-            el.src = `/media/${data.id}.png`
+        el0.onimg = async (el) => {
+          if (el.src.startsWith('/')) {
+            return
           }
+
+          try {
+            // eslint-disable-next-line no-new
+            new URL(el.src)
+          } catch (_) {
+            return
+          }
+
+          const downloadAttr = el.getAttribute('data-download')
+          if (!downloadAttr) {
+            return
+          }
+
+          let attr: {
+            maxWidth?: number;
+          } = {}
+
+          try {
+            attr = JSON.parse(downloadAttr)
+          } catch (_) {}
+
+          const { data } = await axios.post<{
+            id: string;
+          }>('/api/media/cache', attr, {
+            params: {
+              url: el.src
+            }
+          })
+
+          el.src = `/media/${data.id}.png`
         }
       })
     } catch (_) {}
@@ -171,13 +193,4 @@ export function stripIndent (s: string, indent = getIndent(s)) {
     .split('\n')
     .map((r) => r.replace(new RegExp(`^ {1,${indent}}`), ''))
     .join('\n')
-}
-
-function dataURItoBlob (datauri: string) {
-  const arr = datauri.split(','); const mime = (arr[0].match(/:(.*?);/) || [])[1]
-  const bstr = atob(arr[1]); let n = bstr.length; const u8arr = new Uint8Array(n)
-  while (n--) {
-    u8arr[n] = bstr.charCodeAt(n)
-  }
-  return new Blob([u8arr], { type: mime })
 }

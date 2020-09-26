@@ -243,12 +243,24 @@ object EntryController {
     private fun deleteOne(ctx: Context) {
         val id = ctx.queryParam<String>("id").get()
 
-        Api.db.sql2o.open().createQuery("""
-            DELETE FROM `entry`
-            WHERE `id` = :id
-        """.trimIndent())
-                .addParameter("id", id)
-                .executeUpdate()
+        Api.db.sql2o.beginTransaction(Connection.TRANSACTION_SERIALIZABLE).let { connection ->
+            connection.createQuery("""
+                    DELETE FROM `entry_media`
+                    WHERE
+                        `entry_id` = :entryId
+                """.trimIndent())
+                    .addParameter("entryId", id)
+                    .executeUpdate()
+
+            connection.createQuery("""
+                DELETE FROM `entry`
+                WHERE `id` = :id
+            """.trimIndent())
+                    .addParameter("id", id)
+                    .executeUpdate()
+
+            connection.commit()
+        }
 
         ctx.status(201).result("Deleted")
     }

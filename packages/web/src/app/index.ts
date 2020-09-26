@@ -66,34 +66,34 @@ import { Component, Vue } from 'vue-property-decorator'
 
                 const m = getMetadata(doc, str)
 
+                const uuid = Math.random().toString(36).substr(2)
                 const el = document.createElement('x-card')
                 const aEl = document.createElement('a')
                 el.appendChild(aEl)
 
                 Object.assign(aEl, {
                   href: m.url,
-                  textContent: `\n${m.title || m.url}\n`,
+                  textContent: `\n${uuid}\n`,
                   target: '_blank',
                   rel: 'noreferrer noopener'
                 })
 
+                el.setAttribute('href', m.url)
                 if (m.image) {
-                  aEl.setAttribute('data-image', m.image)
+                  el.setAttribute('image', m.image)
                 }
-
                 if (m.title) {
-                  aEl.setAttribute('data-title', m.title)
+                  el.setAttribute('title', m.title)
                 }
-
                 if (m.description) {
-                  aEl.setAttribute('data-description', m.description)
+                  el.setAttribute('description', m.description)
                 }
 
                 ins.getDoc().replaceRange(
                   html_beautify(el.outerHTML, {
                     indent_size: 2,
                     wrap_line_length: 1
-                  }),
+                  }).replace(uuid, m.title || m.url),
                   cursor,
                   {
                     line: cursor.line,
@@ -155,7 +155,6 @@ export default class App extends Vue {
   get elList () {
     return this.$refs.list as HTMLElement & {
       select(i: number): void;
-      focusItemAtIndex(i: number): void;
     }
   }
 

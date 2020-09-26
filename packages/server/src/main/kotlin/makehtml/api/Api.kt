@@ -5,20 +5,22 @@ import io.javalin.apibuilder.ApiBuilder.get
 import io.javalin.apibuilder.ApiBuilder.path
 import io.javalin.apibuilder.EndpointGroup
 import makehtml.db.Db
-import java.io.InputStream
-import java.net.URL
+import org.apache.http.client.methods.HttpGet
+import org.apache.http.impl.client.HttpClients
 
 object Api {
     val db = Db(System.getenv("DB") ?: "data.db")
     val gson = Gson()
+    val httpClient = HttpClients.createDefault()!!
 
     val router = EndpointGroup {
         path("entry", EntryController.router)
         path("media", MediaController.router)
 
         get("scrape") { ctx ->
-            val url = URL(ctx.queryParam<String>("url").get())
-            ctx.result(url.content as InputStream)
+            ctx.result(httpClient.execute(
+                    HttpGet(ctx.queryParam<String>("url").get())
+            ).entity.content)
         }
     }
 }

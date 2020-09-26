@@ -4,6 +4,8 @@ import com.github.guepardoapps.kulid.ULID
 import io.javalin.apibuilder.ApiBuilder.post
 import io.javalin.apibuilder.EndpointGroup
 import io.javalin.http.Context
+import org.apache.http.client.methods.HttpGet
+import java.awt.image.BufferedImage
 import java.io.ByteArrayOutputStream
 import java.math.BigInteger
 import java.security.MessageDigest
@@ -12,6 +14,7 @@ import javax.imageio.ImageIO
 object MediaController {
     val router = EndpointGroup {
         post("upload", this::upload)
+        post("cache", this::cache)
     }
 
     fun getOne(ctx: Context) {
@@ -31,8 +34,50 @@ object MediaController {
 
     private fun upload(ctx: Context) {
         val data = ctx.uploadedFile("file")!!
+        ctx.status(201).json(mapOf(
+                "id" to parseImg(
+                        ImageIO.read(data.content),
+                        data.filename
+                )
+        ))
+    }
 
-        val bImg = ImageIO.read(data.content)
+    private data class CacheAttr(
+            val maxWidth: Int? = null
+    )
+
+    private fun cache(ctx: Context) {
+        val url = ctx.queryParam<String>("url").get()
+        val attr = ctx.bodyValidator(CacheAttr::class.java).getOrNull() ?: CacheAttr()
+
+        var bImg = ImageIO.read(Api.httpClient.execute(
+                HttpGet(ctx.queryParam<String>("url").get())
+        ).entity.content)
+
+        attr.maxWidth?.let { maxWidth ->
+            if (maxWidth < bImg.width) {
+                val targetHeight = bImg.height * maxWidth / bImg.width
+                val resizedImg = BufferedImage(maxWidth, targetHeight,
+                        BufferedImage.TYPE_INT_ARGB)
+                val graphics2D = resizedImg.createGraphics()
+                graphics2D.drawImage(bImg,
+                        0, 0, maxWidth, targetHeight, null)
+                graphics2D.dispose()
+
+                bImg = resizedImg
+            }
+        }
+
+        val filename = url
+                .split('?').first()
+                .split('/').last()
+
+        ctx.status(201).json(mapOf(
+                "id" to parseImg(bImg, filename)
+        ))
+    }
+
+    private fun parseImg(bImg: BufferedImage, filename: String): String {
         val width = bImg.width
         val height = bImg.height
 
@@ -52,7 +97,7 @@ object MediaController {
             hexString.toString()
         }
 
-        val id = Api.db.sql2o.open().let { connection ->
+        return Api.db.sql2o.open().let { connection ->
             connection.createQuery("""
                 SELECT `id`
                 FROM `media`
@@ -79,20 +124,14 @@ object MediaController {
                     )
                 """.trimIndent())
                         .addParameter("id", id)
-                        .addParameter("name", data.filename)
+                        .addParameter("name", filename)
                         .addParameter("data", b)
                         .addParameter("width", width)
                         .addParameter("height", height)
                         .addParameter("h", h)
                         .executeUpdate()
-
-                ctx.status(201)
                 id
             }
         }
-
-        ctx.json(mapOf(
-                "id" to id
-        ))
     }
 }

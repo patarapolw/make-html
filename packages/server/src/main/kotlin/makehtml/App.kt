@@ -19,11 +19,10 @@ fun main(args: Array<String>) {
     }
 
     val app = Javalin.create {
-        it.enableDevLogging()
+        it.addStaticFiles("/public")
 
-        if (Api.db.isJar) {
-            it.addStaticFiles("/public")
-        } else {
+        if (!Api.db.isJar) {
+            it.enableDevLogging()
             it.enableCorsForAllOrigins()
         }
     }.start(System.getenv("PORT")?.toInt() ?: 24000)
@@ -31,9 +30,5 @@ fun main(args: Array<String>) {
     app.routes {
         path("api", Api.router)
         get("media/:name", MediaController::getOne)
-    }
-
-    if (!Api.db.isJar) {
-        app.get("/") { ctx -> ctx.result("Ready") }
     }
 }
