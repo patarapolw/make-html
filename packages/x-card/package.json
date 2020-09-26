@@ -1,6 +1,6 @@
 {
   "name": "@patarapolw/make-html-x-card",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "main": "index.js",
   "types": "index.d.ts",
   "license": "MIT",
@@ -10,11 +10,25 @@
   "repository": "git@github.com:patarapolw/make-html.git",
   "author": "Pacharapol Withayasakpunt <polv@polv.cc>",
   "scripts": {
-    "start": "webpack-dev-server"
+    "dev": "webpack-dev-server"
   },
   "devDependencies": {
+    "import-sort-parser-typescript": "^6.0.0",
     "webpack": "^4.43.0",
     "webpack-cli": "^3.3.12",
     "webpack-dev-server": "^3.11.0"
+  },
+  "engines": {
+    "node": "12.x",
+    "npm": "please-use-pnpm",
+    "yarn": "please-use-pnpm",
+    "pnpm": "5.x"
+  },
+  "engineStrict": true,
+  "importSort": {
+    ".js, .jsx, .ts, .tsx, .vue": {
+      "parser": "typescript",
+      "style": "module"
+    }
   }
 }
