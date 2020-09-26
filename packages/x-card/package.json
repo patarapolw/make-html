@@ -1,6 +1,6 @@
 {
   "name": "@patarapolw/make-html-x-card",
-  "version": "0.2.1d",
+  "version": "0.2.1d1",
   "main": "index.js",
   "types": "index.d.ts",
   "license": "MIT",

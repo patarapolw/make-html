@@ -9,7 +9,7 @@ To use `x-card` webcomponent, simply include
 To support old browsers, you might also need [@webcomponents/webcomponentsjs](https://github.com/webcomponents/polyfills/tree/master/packages/webcomponentsjs)
 
 ```html
-<script src="./node_modules/@webcomponents/webcomponentsjs/webcomponents-loader.js"></script>
+<script src="https://unpkg.com/@webcomponents/webcomponentsjs/webcomponents-loader.js"></script>
 <script type="module" src="https://unpkg.com/@patarapolw/make-html-x-card"></script>
 ```
 
