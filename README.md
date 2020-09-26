@@ -11,12 +11,12 @@ Also, the editor will auto-create images and [x-card](/packages/x-card/index.js)
 To use `x-card` webcomponent, simply include
 
 ```html
-<script src="https://unpkg.com/@patarpolw/make-html-x-card"></script>
+<script src="https://unpkg.com/@patarapolw/make-html-x-card"></script>
 ```
 
 To support old browsers, you might also need [@webcomponents/webcomponentsjs](https://github.com/webcomponents/polyfills/tree/master/packages/webcomponentsjs)
 
 ```html
 <script src="./node_modules/@webcomponents/webcomponentsjs/webcomponents-loader.js"></script>
-<script type="module" src="https://unpkg.com/@patarpolw/make-html-x-card"></script>
+<script type="module" src="https://unpkg.com/@patarapolw/make-html-x-card"></script>
 ```
