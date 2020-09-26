@@ -30,5 +30,8 @@
       "parser": "typescript",
       "style": "module"
     }
+  },
+  "publishConfig": {
+    "access": "public"
   }
 }
