@@ -5,7 +5,6 @@ import io.javalin.apibuilder.ApiBuilder.get
 import io.javalin.apibuilder.ApiBuilder.path
 import io.javalin.apibuilder.EndpointGroup
 import makehtml.db.Db
-import org.apache.http.client.methods.HttpGet
 import org.apache.http.impl.client.HttpClients
 
 object Api {
@@ -17,10 +16,6 @@ object Api {
         path("entry", EntryController.router)
         path("media", MediaController.router)
 
-        get("scrape") { ctx ->
-            ctx.result(httpClient.execute(
-                    HttpGet(ctx.queryParam<String>("url").get())
-            ).entity.content)
-        }
+        get("metadata", UtilController::metadata)
     }
 }

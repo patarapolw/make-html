@@ -143,7 +143,7 @@ export default class App extends Vue {
   }
 
   get codemirror () {
-    return (this.$refs.cm as unknown as {
+    return (this.$refs.cm as HTMLElement & {
       codemirror: CodeMirror.Editor;
     }).codemirror
   }
