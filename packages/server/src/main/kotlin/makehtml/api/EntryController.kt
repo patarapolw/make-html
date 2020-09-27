@@ -92,7 +92,7 @@ object EntryController {
             val html: String,
             val date: String?,
             val tag: List<String>?,
-            val data: Map<String, Any>?,
+            val meta: Map<String, Any>?,
             val media: List<String>?
     )
 
@@ -106,11 +106,11 @@ object EntryController {
                 INSERT INTO `entry` (
                     `id`,
                     `title`, `tag`, `markdown`,
-                    `html`, `date`, `data`
+                    `html`, `date`, `meta`
                 ) VALUES (
                     :id,
                     :title, :tag, :markdown,
-                    :html, :date, :data
+                    :html, :date, :meta
                 )
             """.trimIndent())
                     .addParameter("id", id)
@@ -119,7 +119,7 @@ object EntryController {
                     .addParameter("markdown", body.markdown)
                     .addParameter("html", body.html)
                     .addParameter("date", body.date)
-                    .addParameter("data", Api.gson.toJson(body.data ?: mapOf<String, Any>()))
+                    .addParameter("meta", Api.gson.toJson(body.meta ?: mapOf<String, Any>()))
                     .executeUpdate()
 
             val newMedia = body.media ?: listOf()
@@ -146,7 +146,7 @@ object EntryController {
             val html: String,
             val date: String?,
             val tag: List<String>?,
-            val data: Map<String, Any>?,
+            val meta: Map<String, Any>?,
             val media: List<String>?
     )
 
@@ -163,7 +163,7 @@ object EntryController {
                     `html`      = :html,
                     `date`      = :date,
                     `tag`       = :tag,
-                    `data`      = :data
+                    `meta`      = :meta
                 WHERE `id` = :id
             """.trimIndent())
                     .addParameter("id", id)
@@ -171,7 +171,7 @@ object EntryController {
                     .addParameter("markdown", body.markdown)
                     .addParameter("html", body.html)
                     .addParameter("date", body.date)
-                    .addParameter("data", Api.gson.toJson(body.data ?: mapOf<String, Any>()))
+                    .addParameter("meta", Api.gson.toJson(body.meta ?: mapOf<String, Any>()))
                     .executeUpdate()
 
             val prevMedia = connection.createQuery("""

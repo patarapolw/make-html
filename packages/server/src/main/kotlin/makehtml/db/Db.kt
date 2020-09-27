@@ -27,7 +27,7 @@ class Db(dbString: String) {
                     `markdown`,
                     `html`  UNINDEXED,
                     `date`  UNINDEXED,
-                    `data`  UNINDEXED /* json */
+                    `meta`  UNINDEXED /* json */
                 )
             """.trimIndent()).executeUpdate()
 
@@ -39,6 +39,14 @@ class Db(dbString: String) {
                     `h`         TEXT NOT NULL,
                     `width`     INTEGER NOT NULL,
                     `height`    INTEGER NOT NULL
+                )
+            """.trimIndent()).executeUpdate()
+
+            connection.createQuery("""
+                CREATE TABLE IF NOT EXISTS `entry_media` (
+                    `entry_id`  TEXT NOT NULL REFERENCES `entry`(`id`) ON DELETE CASCADE,
+                    `media_id`  TEXT NOT NULL REFERENCES `media`(`id`) ON DELETE CASCADE,
+                    PRIMARY KEY (`entry_id`, `media_id`)
                 )
             """.trimIndent()).executeUpdate()
 
@@ -56,14 +64,6 @@ class Db(dbString: String) {
 
             connection.createQuery("""
                 CREATE INDEX IF NOT EXISTS `media_height` ON `media`(`height`)
-            """.trimIndent()).executeUpdate()
-
-            connection.createQuery("""
-                CREATE TABLE IF NOT EXISTS `entry_media` (
-                    `entry_id`  TEXT NOT NULL REFERENCES `entry`(`id`) ON DELETE CASCADE,
-                    `media_id`  TEXT NOT NULL REFERENCES `media`(`id`) ON DELETE CASCADE,
-                    PRIMARY KEY (`entry_id`, `media_id`)
-                )
             """.trimIndent()).executeUpdate()
         }
     }

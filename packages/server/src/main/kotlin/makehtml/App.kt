@@ -22,8 +22,11 @@ fun main(args: Array<String>) {
         it.addStaticFiles("/public")
 
         if (!Api.db.isJar) {
-            it.enableDevLogging()
             it.enableCorsForAllOrigins()
+        }
+
+        if (System.getenv("DEBUG") == "1") {
+            it.enableDevLogging()
         }
     }.start(System.getenv("PORT")?.toInt() ?: 24000)
 

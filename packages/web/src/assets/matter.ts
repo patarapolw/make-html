@@ -9,9 +9,9 @@ export const matter = {
       const pre = '---\n'
 
       if (s.startsWith(pre)) {
-        const m = s.substr(4).split(/---\n(.*)$/s)
+        const m = s.substr(pre.length).split(/---\n(.*)$/s)
         return {
-          matter: m[0].substr(pre.length),
+          matter: m[0],
           content: m[1] || ''
         }
       }
