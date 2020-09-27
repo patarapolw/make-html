@@ -50,7 +50,7 @@
       </mwc-top-app-bar>
       <section class="d-grid" :class="(isViewer && isEditor) ? 'is-split-2' : 'is-split-1'">
         <article v-show="isEditor" class="editor">
-          <codemirror ref="cm" />
+          <textarea ref="editor" />
         </article>
         <article v-show="isViewer" class="viewer content" ref="viewer" />
       </section>

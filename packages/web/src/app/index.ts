@@ -1,7 +1,9 @@
 /* eslint-disable @typescript-eslint/camelcase */
 import { MakeHtml } from '@/assets/make-html'
 import { matter } from '@/assets/matter'
+import { cmOptions } from '@/plugins/codemirror'
 import axios from 'axios'
+import CodeMirror from 'codemirror'
 import dayjs from 'dayjs'
 import { html_beautify } from 'js-beautify'
 import { Component, Vue } from 'vue-property-decorator'
@@ -10,13 +12,17 @@ import { Component, Vue } from 'vue-property-decorator'
   watch: {
     id () {
       if (this.id) {
-        this.$router.push({
-          query: {
-            id: this.id
-          }
-        })
+        if (this.$route.query.id !== this.id) {
+          this.$router.push({
+            query: {
+              id: this.id
+            }
+          })
+        }
       } else {
-        this.$router.push('/')
+        if (this.$route.fullPath !== '/') {
+          this.$router.push('/')
+        }
       }
     }
   },
@@ -34,6 +40,11 @@ import { Component, Vue } from 'vue-property-decorator'
     })
   },
   mounted () {
+    this.codemirror = CodeMirror.fromTextArea(
+      this.$refs.editor as HTMLTextAreaElement,
+      cmOptions
+    )
+
     this.codemirror.setSize('100%', '100%')
     this.codemirror.addKeyMap({
       'Cmd-S': () => {
@@ -158,6 +169,8 @@ export default class App extends Vue {
 
   totalFileCount = 0
 
+  codemirror!: CodeMirror.Editor
+
   get markdown () {
     return this._markdown
   }
@@ -223,14 +236,13 @@ export default class App extends Vue {
     return m
   }
 
-  get codemirror () {
-    return (this.$refs.cm as HTMLElement & {
-      codemirror: CodeMirror.Editor;
-    }).codemirror
-  }
-
   get makeHtml () {
-    return new MakeHtml(this.id || undefined)
+    const mk = new MakeHtml(this.id || undefined)
+    mk.onCmChanged = () => {
+      this.codemirror.setOption('mode', cmOptions.mode)
+    }
+
+    return mk
   }
 
   get elList () {

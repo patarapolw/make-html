@@ -3,6 +3,7 @@ import 'highlight.js/styles/github.css'
 import { hljsRegisterVue } from '@patarapolw/highlightjs-vue'
 import imsize from '@patarapolw/markdown-it-imsize'
 import axios from 'axios'
+import CodeMirror from 'codemirror'
 import hljs from 'highlight.js'
 import HyperPug from 'hyperpug'
 import { patch } from 'incremental-dom'
@@ -18,12 +19,31 @@ import { matter } from './matter'
 
 hljsRegisterVue(hljs)
 
+declare global {
+  interface Window {
+    CodeMirror: typeof import('codemirror');
+    hljs: typeof import('highlight.js');
+  }
+}
+
+window.CodeMirror = CodeMirror
+window.hljs = hljs
+
 function getLang (
   lib: string,
   ver: string,
   parser: RegExp,
-  alias: Record<string, string> = {}
+  prev = new Set<string>()
 ) {
+  const alias: Record<string, string> = {
+    js: 'javascript',
+    ts: 'typescript',
+    py: 'python',
+    md: 'markdown',
+    html: 'xml',
+    pug: 'jade'
+  }
+
   const lang: Record<string, string> = {}
   axios.get<{
     files: string[];
@@ -40,13 +60,15 @@ function getLang (
     })
 
   return {
-    alias,
-    lang,
     get (ln: string) {
-      const url = this.lang[ln]
+      if (prev.has(ln)) return null
+
+      const url = lang[ln]
       if (url) return url
-      if (!this.alias[ln]) return null
-      return this.lang[this.alias[ln]]
+      if (!alias[ln]) return null
+      if (prev.has(alias[ln])) return null
+
+      return lang[alias[ln]] || null
     }
   }
 }
@@ -54,15 +76,22 @@ function getLang (
 const hljsLang = getLang(
   'highlight.js',
   '10.2.0',
-  /^languages\/(?<lang>\S+)\.min\.js$/,
-  {
-    html: 'xml'
-  }
+  /^languages\/(?<lang>\S+)\.min\.js$/
+)
+
+const cmLang = getLang(
+  'codemirror',
+  '5.58.1',
+  /^mode\/(?<lang>\S+)\/.+\.min\.js$/,
+  new Set(['yaml', 'markdown', 'pug', 'html', 'xml', 'css'])
 )
 
 export class MakeHtml {
   private md: MarkdownIt
   private hp: HyperPug
+
+  // eslint-disable-next-line @typescript-eslint/no-empty-function
+  onCmChanged = () => {}
 
   constructor (public id = Math.random().toString(36)) {
     this.id = 'el-' + hashFnv32a(this.id)
@@ -82,15 +111,26 @@ export class MakeHtml {
             return this._pugConvert(content)
           }
 
-          const hljsUrl = hljsLang.get(info)
-          if (hljsUrl &&
-              !document.querySelector(`script[src="${hljsUrl}"]`)) {
-            document.body.appendChild(Object.assign(
-              document.createElement('script'),
-              {
-                src: hljsUrl
-              }
-            ))
+          let url: string | null
+          url = hljsLang.get(info)
+          if (url && !document.querySelector(`script[src="${url}"]`)) {
+            const script = document.createElement('script')
+            script.src = url
+            script.setAttribute('data-highlight', 'highlight.js')
+            document.body.appendChild(script)
+          }
+
+          url = cmLang.get(info)
+          if (url && !document.querySelector(`script[src="${url}"]`)) {
+            const script = document.createElement('script')
+            script.src = url
+            script.setAttribute('data-highlight', 'codemirror')
+            script.onload = () => {
+              this.onCmChanged()
+              script.onload = null
+            }
+
+            document.body.appendChild(script)
           }
 
           // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
