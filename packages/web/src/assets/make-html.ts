@@ -1,10 +1,8 @@
-import 'highlight.js/styles/github.css'
+import 'prismjs/themes/prism.css'
 
-import { hljsRegisterVue } from '@patarapolw/highlightjs-vue'
 import imsize from '@patarapolw/markdown-it-imsize'
 import axios from 'axios'
 import CodeMirror from 'codemirror'
-import hljs from 'highlight.js'
 import HyperPug from 'hyperpug'
 import { patch } from 'incremental-dom'
 import MarkdownIt from 'markdown-it'
@@ -12,22 +10,21 @@ import mdContainer from 'markdown-it-container'
 import emoji from 'markdown-it-emoji'
 import externalLinks from 'markdown-it-external-links'
 import { unescapeAll } from 'markdown-it/lib/common/utils'
+import Prism from 'prismjs'
 import scopeCss from 'scope-css'
 
 import { makeIncremental } from './incremental'
 import { matter } from './matter'
 
-hljsRegisterVue(hljs)
-
 declare global {
   interface Window {
     CodeMirror: typeof import('codemirror');
-    hljs: typeof import('highlight.js');
+    Prism: typeof import('prismjs');
   }
 }
 
 window.CodeMirror = CodeMirror
-window.hljs = hljs
+window.Prism = Prism
 
 function getLang (
   lib: string,
@@ -73,10 +70,10 @@ function getLang (
   }
 }
 
-const hljsLang = getLang(
-  'highlight.js',
-  '10.2.0',
-  /^languages\/(?<lang>\S+)\.min\.js$/
+const prismLang = getLang(
+  'prism',
+  '1.21.0',
+  /^components\/prism-(?<lang>\S+)\.min\.js$/
 )
 
 const cmLang = getLang(
@@ -92,6 +89,8 @@ export class MakeHtml {
 
   // eslint-disable-next-line @typescript-eslint/no-empty-function
   onCmChanged = () => {}
+  // eslint-disable-next-line @typescript-eslint/no-empty-function
+  onPrismChanged = () => {}
 
   constructor (public id = Math.random().toString(36)) {
     this.id = 'el-' + hashFnv32a(this.id)
@@ -112,11 +111,16 @@ export class MakeHtml {
           }
 
           let url: string | null
-          url = hljsLang.get(info)
+          url = prismLang.get(info)
           if (url && !document.querySelector(`script[src="${url}"]`)) {
             const script = document.createElement('script')
             script.src = url
-            script.setAttribute('data-highlight', 'highlight.js')
+            script.setAttribute('data-highlight', 'prism')
+            script.onload = () => {
+              this.onPrismChanged()
+              script.onload = null
+            }
+
             document.body.appendChild(script)
           }
 
@@ -183,15 +187,16 @@ export class MakeHtml {
         el.innerHTML = scopeCss(el.innerHTML, `.${this.id}`)
       })
 
-      body.querySelectorAll('pre code').forEach((el) => {
-        hljs.highlightBlock(el as HTMLElement)
-      })
-
       body.querySelectorAll('img, iframe').forEach((el) => {
         el.setAttribute('loading', 'lazy')
       })
 
       patch(dom, makeIncremental(body.outerHTML))
+
+      this.onPrismChanged = () => {
+        Prism.highlightAllUnder(dom)
+      }
+      this.onPrismChanged()
 
       dom.querySelectorAll('x-card').forEach((el) => {
         const el0 = (el as HTMLElement & {

@@ -9,21 +9,19 @@ importers:
       '@material/mwc-list': 0.18.0
       '@material/mwc-textfield': 0.18.0
       '@material/mwc-top-app-bar': 0.18.0
-      '@patarapolw/highlightjs-vue': 1.0.0-dev4_highlight.js@10.2.0
       '@patarapolw/make-html-x-card': 'link:../x-card'
       '@patarapolw/markdown-it-imsize': 2.0.1-dev3
       '@types/codemirror': 0.0.98
-      '@types/highlight.js': 9.12.4
       '@types/js-beautify': 1.11.0
       '@types/js-yaml': 3.12.5
       '@types/markdown-it': 10.0.2
+      '@types/prismjs': 1.16.1
       '@webcomponents/webcomponentsjs': 2.4.4
       any-serialize: 1.4.12
       axios: 0.20.0
       codemirror: 5.58.1
       core-js: 3.6.5
       dayjs: 1.8.36
-      highlight.js: 10.2.0
       htmlparser2: 4.1.0
       hyperpug: 1.5.3
       incremental-dom: 0.7.0
@@ -34,6 +32,7 @@ importers:
       markdown-it-emoji: 1.4.0
       markdown-it-external-links: 0.0.6
       normalize.css: 8.0.1
+      prismjs: 1.21.0
       scope-css: 1.2.1
       vue: 2.6.12
       vue-class-component: 7.2.6_vue@2.6.12
@@ -66,14 +65,13 @@ importers:
       '@material/mwc-list': ^0.18.0
       '@material/mwc-textfield': ^0.18.0
       '@material/mwc-top-app-bar': ^0.18.0
-      '@patarapolw/highlightjs-vue': ^1.0.0-dev4
       '@patarapolw/make-html-x-card': '*'
       '@patarapolw/markdown-it-imsize': ^2.0.1-dev3
       '@types/codemirror': ^0.0.98
-      '@types/highlight.js': ^9.12.4
       '@types/js-beautify': ^1.11.0
       '@types/js-yaml': ^3.12.5
       '@types/markdown-it': ^10.0.2
+      '@types/prismjs': ^1.16.1
       '@typescript-eslint/eslint-plugin': ^2.33.0
       '@typescript-eslint/parser': ^2.33.0
       '@vue/cli-plugin-babel': ~4.5.0
@@ -95,7 +93,6 @@ importers:
       eslint-plugin-promise: ^4.2.1
       eslint-plugin-standard: ^4.0.0
       eslint-plugin-vue: ^6.2.2
-      highlight.js: ^10.2.0
       htmlparser2: ^4.1.0
       hyperpug: ^1.5.3
       import-sort-parser-typescript: ^6.0.0
@@ -107,6 +104,7 @@ importers:
       markdown-it-emoji: ^1.4.0
       markdown-it-external-links: ^0.0.6
       normalize.css: ^8.0.1
+      prismjs: ^1.21.0
       scope-css: ^1.2.1
       typescript: ~3.9.3
       vue: ^2.6.11
@@ -1482,14 +1480,6 @@ packages:
       node: '>= 6'
     resolution:
       integrity: sha512-shAmDyaQC4H92APFoIaVDHCx5bStIocgvbwQyxPRrbUY20V1EYTbSDchWbuwlMG3V17cprZhA6+78JfB+3DTPw==
-  /@patarapolw/highlightjs-vue/1.0.0-dev4_highlight.js@10.2.0:
-    dependencies:
-      highlight.js: 10.2.0
-    dev: false
-    peerDependencies:
-      highlight.js: '*'
-    resolution:
-      integrity: sha512-p1LgqMO/uwk99u8PZ5AZPs/ITGa3qJzfjuEiof3IB5qEaguRW/0oLw88WC3l2V9BlaYjfDUmHEtiL2TZqW82pQ==
   /@patarapolw/markdown-it-imsize/2.0.1-dev3:
     dev: false
     resolution:
@@ -1575,10 +1565,6 @@ packages:
     dev: true
     resolution:
       integrity: sha512-SEYeGAIQIQX8NN6LDKprLjbrd5dARM5EXsd8GI/A5l0apYI1fGMWgPHSe4ZKL4eozlAyI+doUE9XbYS4xCkQ1w==
-  /@types/highlight.js/9.12.4:
-    dev: false
-    resolution:
-      integrity: sha512-t2szdkwmg2JJyuCM20e8kR2X59WCE5Zkl4bzm1u1Oukjm79zpbiAv+QjnwLnuuV0WHEcX2NgUItu0pAMKuOPww==
   /@types/http-proxy-middleware/0.19.3:
     dependencies:
       '@types/connect': 3.4.33
@@ -1649,6 +1635,10 @@ packages:
     optional: true
     resolution:
       integrity: sha512-//oorEZjL6sbPcKUaCdIGlIUeH26mgzimjBB77G6XRgnDl/L5wOnpyBGRe/Mmf5CVW3PwEBE1NjiMZ/ssFh4wA==
+  /@types/prismjs/1.16.1:
+    dev: false
+    resolution:
+      integrity: sha512-RNgcK3FEc1GpeOkamGDq42EYkb6yZW5OWQwTS56NJIB8WL0QGISQglA7En7NUx9RGP8AC52DOe+squqbAckXlA==
   /@types/q/1.5.4:
     dev: true
     resolution:
@@ -3298,6 +3288,15 @@ packages:
       node: '>= 10'
     resolution:
       integrity: sha512-FxqpkPPwu1HjuN93Omfm4h8uIanXofW0RxVEW3k5RKx+mJJYSthzNhp32Kzxxy3YAEZ/Dc/EWN1vZRY0+kOhbw==
+  /clipboard/2.0.6:
+    dependencies:
+      good-listener: 1.2.2
+      select: 1.1.2
+      tiny-emitter: 2.1.0
+    dev: false
+    optional: true
+    resolution:
+      integrity: sha512-g5zbiixBRk/wyKakSwCKd7vQXDjFnAMGHoEyBogG/bw9kTD9GvdAvaoRR1ALcEzt3pVKxZR0pViekPMIS0QyGg==
   /clipboardy/2.3.0:
     dependencies:
       arch: 2.1.2
@@ -4009,6 +4008,11 @@ packages:
       node: '>=0.4.0'
     resolution:
       integrity: sha1-3zrhmayt+31ECqrgsp4icrJOxhk=
+  /delegate/3.2.0:
+    dev: false
+    optional: true
+    resolution:
+      integrity: sha512-IofjkYBZaZivn0V8nnsMJGBr4jVLxHDheKSW88PyxS5QC4Vo9ZbZVvhzlSxY87fVq3STR6r+4cGepyHkcWOQSw==
   /depd/1.1.2:
     dev: true
     engines:
@@ -5352,6 +5356,13 @@ packages:
       node: '>=6'
     resolution:
       integrity: sha512-ollPHROa5mcxDEkwg6bPt3QbEf4pDQSNtd6JPL1YvOvAo/7/0VAm9TccUeoTmarjPw4pfUthSCqcyfNB1I3ZSg==
+  /good-listener/1.2.2:
+    dependencies:
+      delegate: 3.2.0
+    dev: false
+    optional: true
+    resolution:
+      integrity: sha1-1TswzfkxPf+33JoNR3CWqm0UXFA=
   /graceful-fs/4.2.4:
     dev: true
     resolution:
@@ -5488,10 +5499,6 @@ packages:
     dev: true
     resolution:
       integrity: sha512-l9sfDFsuqtOqKDsQdqrMRk0U85RZc0RtOR9yPI7mRVOa4FsR/BVnZ0shmQRM96Ji99kYZP/7hn1cedc1+ApsTQ==
-  /highlight.js/10.2.0:
-    dev: false
-    resolution:
-      integrity: sha512-OryzPiqqNCfO/wtFo619W+nPYALM6u7iCQkum4bqRmmlcTikOkmlL06i009QelynBPAlNByTQU6cBB2cOBQtCw==
   /highlight.js/9.18.3:
     dev: true
     resolution:
@@ -8127,6 +8134,12 @@ packages:
     dev: true
     resolution:
       integrity: sha1-X0+HyPkeWuPzuoerTPXgOxoX8aM=
+  /prismjs/1.21.0:
+    dev: false
+    optionalDependencies:
+      clipboard: 2.0.6
+    resolution:
+      integrity: sha512-uGdSIu1nk3kej2iZsLyDoJ7e9bnPzIgY0naW/HdknGj61zScaprVEVGHrPoXqI+M9sP0NDnTK2jpkvmldpuqDw==
   /process-nextick-args/2.0.1:
     dev: true
     resolution:
@@ -8687,6 +8700,11 @@ packages:
     dev: true
     resolution:
       integrity: sha1-Yl2GWPhlr0Psliv8N2o3NZpJlMo=
+  /select/1.1.2:
+    dev: false
+    optional: true
+    resolution:
+      integrity: sha1-DnNQrN7ICxEIUoeG7B1EGNEbOW0=
   /selfsigned/1.10.8:
     dependencies:
       node-forge: 0.10.0
@@ -9442,6 +9460,11 @@ packages:
     dev: true
     resolution:
       integrity: sha1-QFQRqOfmM5/mTbmiNN4R3DHgK9Q=
+  /tiny-emitter/2.1.0:
+    dev: false
+    optional: true
+    resolution:
+      integrity: sha512-NB6Dk1A9xgQPMoGqC5CVXn123gWyte215ONT5Pp5a0yt4nlEoO1ZWeCwpncaekPHXO60i47ihFnZPiRPjRMq4Q==
   /tmp/0.0.33:
     dependencies:
       os-tmpdir: 1.0.2
