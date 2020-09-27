@@ -1,3 +1,5 @@
+import 'highlight.js/styles/github.css'
+
 import { hljsRegisterVue } from '@patarapolw/highlightjs-vue'
 import imsize from '@patarapolw/markdown-it-imsize'
 import axios from 'axios'
@@ -15,6 +17,48 @@ import { makeIncremental } from './incremental'
 import { matter } from './matter'
 
 hljsRegisterVue(hljs)
+
+function getLang (
+  lib: string,
+  ver: string,
+  parser: RegExp,
+  alias: Record<string, string> = {}
+) {
+  const lang: Record<string, string> = {}
+  axios.get<{
+    files: string[];
+  }>(`https://api.cdnjs.com/libraries/${lib}/${ver}?fields=files`)
+    .then(({ data }) => {
+      data.files
+        .map((f) => {
+          const m = parser.exec(f)
+          if (m?.groups?.lang) {
+            lang[m.groups.lang] =
+              `https://cdnjs.cloudflare.com/ajax/libs/${lib}/${ver}/${f}`
+          }
+        })
+    })
+
+  return {
+    alias,
+    lang,
+    get (ln: string) {
+      const url = this.lang[ln]
+      if (url) return url
+      if (!this.alias[ln]) return null
+      return this.lang[this.alias[ln]]
+    }
+  }
+}
+
+const hljsLang = getLang(
+  'highlight.js',
+  '10.2.0',
+  /^languages\/(?<lang>\S+)\.min\.js$/,
+  {
+    html: 'xml'
+  }
+)
 
 export class MakeHtml {
   private md: MarkdownIt
@@ -36,6 +80,17 @@ export class MakeHtml {
 
           if (info === 'pug parsed') {
             return this._pugConvert(content)
+          }
+
+          const hljsUrl = hljsLang.get(info)
+          if (hljsUrl &&
+              !document.querySelector(`script[src="${hljsUrl}"]`)) {
+            document.body.appendChild(Object.assign(
+              document.createElement('script'),
+              {
+                src: hljsUrl
+              }
+            ))
           }
 
           // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
