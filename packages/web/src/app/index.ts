@@ -7,6 +7,19 @@ import { html_beautify } from 'js-beautify'
 import { Component, Vue } from 'vue-property-decorator'
 
 @Component<App>({
+  watch: {
+    id () {
+      if (this.id) {
+        this.$router.push({
+          query: {
+            id: this.id
+          }
+        })
+      } else {
+        this.$router.push('/')
+      }
+    }
+  },
   created () {
     this.queryMore().then(() => {
       if (!this.$route.query.id) {
@@ -322,8 +335,6 @@ export default class App extends Vue {
     this.elList.select(-1)
 
     setTimeout(() => {
-      this.$router.push('/')
-
       this.id = ''
       this.title = this.newTitle()
       this.markdown = ''
@@ -338,12 +349,6 @@ export default class App extends Vue {
     if (id === this.id) {
       return
     }
-
-    this.$router.push({
-      query: {
-        id
-      }
-    })
 
     const { data } = await axios.get<{
       title: string;
@@ -365,16 +370,17 @@ export default class App extends Vue {
 
   async saveFile () {
     const { tag, date, ...meta } = this.frontmatter
+    const payload = {
+      markdown: this.markdown,
+      html: this.getHtml(),
+      media: this.getMediaList(),
+      meta,
+      tag,
+      date
+    }
 
     if (this.id) {
-      await axios.patch('/api/entry', {
-        markdown: this.markdown,
-        html: this.getHtml(),
-        media: this.getMediaList(),
-        meta,
-        tag,
-        date
-      }, {
+      await axios.patch('/api/entry', payload, {
         params: {
           id: this.id
         }
@@ -384,16 +390,10 @@ export default class App extends Vue {
         id: string;
       }>('/api/entry', {
         title: this.title,
-        markdown: this.markdown,
-        html: this.getHtml(),
-        media: this.getMediaList(),
-        meta,
-        tag,
-        date
+        ...payload
       })
 
       this.id = data.id
-
       this.filelist = [
         {
           id: this.id,
