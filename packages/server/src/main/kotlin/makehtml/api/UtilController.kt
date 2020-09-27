@@ -1,18 +1,13 @@
 package makehtml.api
 
-import com.github.salomonbrys.kotson.fromJson
 import io.javalin.http.Context
 import org.jsoup.Jsoup
 import java.net.URI
 
 object UtilController {
-    private data class FetchMetadata(
-            val mediaId: String,
-            val meta: String
-    )
-
     private data class MetadataResult(
-            var mediaId: String? = null,
+            val mediaId: String?,
+            val url: String,
             val title: String?,
             val description: String?,
             val image: String?
@@ -21,23 +16,6 @@ object UtilController {
     fun metadata(ctx: Context) {
         val uri = URI(ctx.queryParam<String>("url").get())
         val url = uri.toString()
-
-        val fm = Api.db.sql2o.open().createQuery("""
-            SELECT
-                `media_id` AS `mediaId`, `meta`
-            FROM `metadata`
-            WHERE `url` = :url
-        """.trimIndent())
-                .addParameter("url", url)
-                .executeAndFetchFirst(FetchMetadata::class.java)
-
-        if (fm != null) {
-            val metadata = Api.gson.fromJson<MetadataResult>(fm.meta)
-            metadata.mediaId = fm.mediaId
-
-            ctx.json(metadata)
-            return
-        }
 
         val doc = Jsoup.connect(url).get()
 
@@ -69,26 +47,13 @@ object UtilController {
                 )?.attr("content") ?:
                 doc.selectFirst("title")?.text()
 
-        val metadata = MetadataResult(null, title, description, image)
-
-        image?.let {
-            metadata.mediaId = MediaController.parseImg(
+        val mediaId = image?.let {
+            MediaController.parseImg(
                     it,
                     MediaController.CacheAttr(maxWidth = 100)
             )
         }
 
-        Api.db.sql2o.open().createQuery("""
-            INSERT INTO `metadata` (
-                `url`, `media_id`, `meta`
-            ) VALUES (
-                :url, :mediaId, :meta
-            )
-        """.trimIndent())
-                .addParameter("url", url)
-                .addParameter("mediaId", metadata.mediaId)
-                .addParameter("meta", Api.gson.toJson(metadata))
-
-        ctx.json(metadata)
+        ctx.json(MetadataResult(mediaId, url, title, description, image))
     }
 }

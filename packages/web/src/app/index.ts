@@ -1,8 +1,9 @@
 /* eslint-disable @typescript-eslint/camelcase */
 import { MakeHtml } from '@/assets/make-html'
+import { matter } from '@/assets/matter'
 import axios from 'axios'
+import dayjs from 'dayjs'
 import { html_beautify } from 'js-beautify'
-import { getMetadata } from 'page-metadata-parser'
 import { Component, Vue } from 'vue-property-decorator'
 
 @Component<App>({
@@ -52,19 +53,22 @@ import { Component, Vue } from 'vue-property-decorator'
               id: string;
             }>('/api/media/upload', formData)
 
-            ins.getDoc().replaceRange(`![${data.id}](/media/${data.id}.png)`, cursor)
+            ins.getDoc().replaceRange(`![clipboard](/media/${data.id}.png)`, cursor)
           } else if (item.type === 'text/plain') {
             const cursor = ins.getCursor()
             item.getAsString(async (str) => {
               if (/^https?:\/\//.test(str)) {
-                const doc = document.createElement('div')
-                doc.innerHTML = (await axios.get('/api/scrape', {
+                const { data: m } = await axios.get<{
+                  mediaId?: string;
+                  url: string;
+                  title?: string;
+                  description?: string;
+                  image?: string;
+                }>('/api/metadata', {
                   params: {
                     url: str
                   }
-                })).data
-
-                const m = getMetadata(doc, str)
+                })
 
                 const uuid = Math.random().toString(36).substr(2)
                 const el = document.createElement('x-card')
@@ -140,6 +144,63 @@ export default class App extends Vue {
 
   set markdown (s: string) {
     this.codemirror.setValue(s)
+  }
+
+  get frontmatter (): {
+    tag?: string[];
+    date?: string;
+    } {
+    const { tag, date, ...m } = matter.parse(this._markdown).data as {
+      tag?: string[];
+      date?: string;
+    }
+
+    function validateTag (): string[] | null {
+      if (Array.isArray(tag) && tag.every((t) => typeof t === 'string')) {
+        return tag
+      }
+
+      return null
+    }
+
+    function validateDate (): string | null {
+      if (typeof date !== 'string') return null
+      if (/^\d+(\.\d+)?$/.test(date)) return null
+
+      const dateFormat = 'YYYY-MM-DDTHH:mm:ssZ'
+      // const dateFormat = 'YYYY-MM-DDTHH:mm:ss.SSSZ'
+      let d: dayjs.Dayjs
+
+      d = dayjs(date, [
+        'YYYY-MM-DD',
+        'YYYY-MM-DD H:mm',
+        'YYYY-MM-DD HH:mm',
+        'YYYY-MM-DDTHH:mm'
+      ])
+
+      if (d.isValid()) {
+        return d
+          .subtract(new Date().getTimezoneOffset(), 'minute')
+          .format(dateFormat)
+      }
+
+      d = dayjs(date)
+
+      if (d.isValid()) return d.format(dateFormat)
+
+      return null
+    }
+
+    if (validateTag()) {
+      Object.assign(m, { tag })
+    }
+
+    const d = validateDate()
+    if (d) {
+      Object.assign(m, { date: d })
+    }
+
+    return m
   }
 
   get codemirror () {
@@ -288,11 +349,16 @@ export default class App extends Vue {
   }
 
   async saveFile () {
+    const { tag, date, ...meta } = this.frontmatter
+
     if (this.id) {
       await axios.patch('/api/entry', {
         markdown: this.markdown,
         html: this.getHtml(),
-        media: this.getMediaList()
+        media: this.getMediaList(),
+        meta,
+        tag,
+        date
       }, {
         params: {
           id: this.id
@@ -305,7 +371,10 @@ export default class App extends Vue {
         title: this.title,
         markdown: this.markdown,
         html: this.getHtml(),
-        media: this.getMediaList()
+        media: this.getMediaList(),
+        meta,
+        tag,
+        date
       })
 
       this.id = data.id

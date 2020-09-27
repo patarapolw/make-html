@@ -51,14 +51,6 @@ class Db(dbString: String) {
             """.trimIndent()).executeUpdate()
 
             connection.createQuery("""
-                CREATE TABLE IF NOT EXISTS `metadata` (
-                    `url`       TEXT PRIMARY KEY,
-                    `media_id`  TEXT NULL REFERENCES `media`(`id`) ON DELETE CASCADE,
-                    `meta`      TEXT NOT NULL /* json */
-                )
-            """.trimIndent()).executeUpdate()
-
-            connection.createQuery("""
                 CREATE INDEX IF NOT EXISTS `media_name` ON `media`(`name`)
             """.trimIndent()).executeUpdate()
 
@@ -72,10 +64,6 @@ class Db(dbString: String) {
 
             connection.createQuery("""
                 CREATE INDEX IF NOT EXISTS `media_height` ON `media`(`height`)
-            """.trimIndent()).executeUpdate()
-
-            connection.createQuery("""
-                CREATE INDEX IF NOT EXISTS `metadata_media_id` ON `metadata`(`media_id`)
             """.trimIndent()).executeUpdate()
         }
     }
