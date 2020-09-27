@@ -1,30 +1,51 @@
 <template>
-  <div id="nav">
-    <router-link to="/">Home</router-link> |
-    <router-link to="/about">About</router-link>
-  </div>
-  <router-view/>
+  <mwc-drawer type="modal" ref="elDrawer">
+    <div class="d-grid drawer">
+      <mwc-textfield
+        label="Search" iconTrailing="search"
+        :value="q" @input="q = $event.target.value"
+        @keydown.enter="doQuery"
+      />
+      <mwc-list activatable rootTabbable ref="elList">
+        <mwc-list-item
+          hasMeta
+          v-for="el in filelist"
+          :key="el.id"
+          @request-selected="openFile(el.id)"
+        >
+          {{ el.title }}
+          <mwc-icon class="deleteFile"
+            slot="meta" @click="deleteFile(el.id)">delete</mwc-icon>
+        </mwc-list-item>
+      </mwc-list>
+    </div>
+
+    <router-view slot="appContent" />
+  </mwc-drawer>
 </template>
 
-<style>
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
+<script lang="ts" src="./app/index.ts" />
+
+<style scoped>
+.drawer {
+  grid-template-rows: auto 1fr;
+  height: 100vh;
 }
 
-#nav {
-  padding: 30px;
+mwc-drawer {
+  height: 100vh;
+  width: 100vw;
 }
 
-#nav a {
-  font-weight: bold;
-  color: #2c3e50;
+mwc-list {
+  overflow: scroll;
 }
 
-#nav a.router-link-exact-active {
-  color: #42b983;
+mwc-icon.deleteFile {
+  filter: brightness(3);
+}
+
+mwc-icon.deleteFile:hover {
+  filter: initial;
 }
 </style>
