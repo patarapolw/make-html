@@ -9,13 +9,15 @@ import { Component, Vue } from 'vue-property-decorator'
 @Component<App>({
   created () {
     this.queryMore().then(() => {
-      setTimeout(() => {
-        if (this.filelist.length > 0) {
-          this.elList.select(0)
-        } else {
-          this.title = this.newTitle()
-        }
-      }, 100)
+      if (!this.$route.query.id) {
+        setTimeout(() => {
+          if (this.filelist.length > 0) {
+            this.elList.select(0)
+          } else {
+            this.title = this.newTitle()
+          }
+        }, 100)
+      }
     })
   },
   mounted () {
@@ -117,6 +119,11 @@ import { Component, Vue } from 'vue-property-decorator'
         this.queryMore()
       }
     })
+
+    const id = this.$route.query.id as string
+    if (id) {
+      this.loadFile(id)
+    }
   }
 })
 export default class App extends Vue {
@@ -315,6 +322,8 @@ export default class App extends Vue {
     this.elList.select(-1)
 
     setTimeout(() => {
+      this.$router.push('/')
+
       this.id = ''
       this.title = this.newTitle()
       this.markdown = ''
@@ -329,6 +338,12 @@ export default class App extends Vue {
     if (id === this.id) {
       return
     }
+
+    this.$router.push({
+      query: {
+        id
+      }
+    })
 
     const { data } = await axios.get<{
       title: string;
