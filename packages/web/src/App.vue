@@ -1,147 +1,168 @@
 <template>
-  <mwc-drawer type="modal">
-    <div class="d-grid drawer">
-      <mwc-textfield
-        label="Search" iconTrailing="search"
-        :value="q" @input="q = $event.target.value"
-        @keydown.enter="doQuery"
+  <md-app>
+    <md-app-toolbar>
+      <md-button
+        class="md-icon-button"
+        @click="isDrawer = !isDrawer"
+      >
+        <md-icon>menu</md-icon>
+      </md-button>
+
+      <input :class="'no-formatting title ' + (id ? '' : 'is-new')"
+        v-model="title" type="text"
+        @keydown.enter="() => { setTitle(); return false }"
+        @blur="setTitle"
       />
-      <mwc-list activatable rootTabbable ref="list">
-        <mwc-list-item
-          hasMeta
+
+      <div class="flex-grow-1"></div>
+
+      <md-button class="md-raised button-new"
+        @click="newFile"
+        :disabled="!id"
+      >
+        New
+      </md-button>
+
+      <md-button class="md-raised button-save"
+        @click="saveFile"
+        :disabled="!isEdited"
+      >
+        Save
+      </md-button>
+
+      <md-button class="md-raised button-toggle"
+        @click="toggle"
+      >
+        Toggle
+      </md-button>
+    </md-app-toolbar>
+
+    <md-app-drawer :md-active.sync="isDrawer">
+      <md-field>
+        <label>Search</label>
+        <md-input v-model="q" @keydown.enter="doQuery" />
+        <md-icon>search</md-icon>
+      </md-field>
+
+      <md-list ref="elList">
+        <md-list-item
           v-for="el in filelist"
           :key="el.id"
-          @request-selected="loadFile(el.id)"
+          @click="loadFile(el.id)"
+          :data-selected="el.id === id"
         >
-          {{ el.title }}
-          <mwc-icon class="deleteFile"
-            slot="meta" @click="deleteFile(el.id)">delete</mwc-icon>
-        </mwc-list-item>
-      </mwc-list>
-    </div>
+          <span class="md-list-item-text">
+            {{ el.title }}
+          </span>
 
-    <section slot="appContent" class="app d-grid">
-      <mwc-top-app-bar>
-        <mwc-icon-button slot="navigationIcon"
-          icon="menu"
-          @click="$el.open = !$el.open"
-        />
-        <div slot="title" :class="id ? '' : 'is-new'">
-          <input class="no-formatting"
-            v-model="title" type="text"
-            @keydown.enter="() => false"
-            @blur="setTitle"
-          />
-        </div>
-        <mwc-button slot="actionItems" raised
-          label="New"
-          @click="newFile"
-          :disabled="!id"
-        />
-        <mwc-button slot="actionItems" raised
-          label="Save"
-          @click="saveFile"
-          :disabled="!isEdited"
-        />
-        <mwc-button slot="actionItems" raised
-          label="Toggle"
-          @click="toggle"
-        />
-      </mwc-top-app-bar>
-      <section class="d-grid" :class="(isViewer && isEditor) ? 'is-split-2' : 'is-split-1'">
-        <article v-show="isEditor" class="editor">
+          <md-button class="md-icon-button md-list-action"
+            @click="deleteFile(el.id)"
+          >
+            <md-icon>delete</md-icon>
+          </md-button>
+        </md-list-item>
+      </md-list>
+    </md-app-drawer>
+
+    <md-app-content>
+      <section class="md-layout">
+        <article class="md-layout-item editor">
           <textarea ref="editor" />
         </article>
-        <article v-show="isViewer" class="viewer content" ref="viewer" />
+        <article v-show="isViewer" class="md-layout-item viewer" ref="viewer" />
       </section>
-    </section>
-  </mwc-drawer>
+    </md-app-content>
+  </md-app>
 </template>
 
 <script lang="ts" src="./app/index.ts" />
 
-<style scoped>
-.app {
-  height: 100%;
-  grid-template-rows: auto 1fr;
+<style lang="scss" scoped>
+.md-app-toolbar {
+  height: 60px;
+  background-color: rgb(255, 238, 83);
+}
+
+.md-app-content {
+  padding: 0;
   overflow: hidden;
+
+  .md-layout-item {
+    height: calc(100vh - 60px);
+    box-sizing: border-box;
+  }
 }
 
-.drawer {
-  grid-template-rows: auto 1fr;
-  height: 100vh;
+.md-drawer {
+  width: 15rem;
+
+  .md-list-item[data-selected] {
+    background-color: rgb(185, 228, 255);
+  }
+
+  .md-list-item-content {
+    text-overflow: ellipsis;
+  }
 }
 
-mwc-drawer {
-  height: 100vh;
-  width: 100vw;
-}
+.md-field {
+  margin: 0;
 
-mwc-list {
-  overflow: scroll;
-}
+  label {
+    left: 5px;
+  }
 
-mwc-button {
-  --mdc-theme-on-primary: initial;
-}
-
-mwc-button + mwc-button {
-  margin-left: 1rem;
-}
-
-mwc-button[label="New"] {
-  --mdc-theme-primary: rgb(255, 105, 19);
-}
-
-mwc-button[label="Save"] {
-  --mdc-theme-primary: rgb(66, 123, 255);
-}
-
-mwc-button[label="Toggle"] {
-  --mdc-theme-primary: rgb(0, 167, 111);
+  .md-icon {
+    margin-right: 5px;
+  }
 }
 
 .viewer {
   padding: 1rem;
   padding-bottom: 100px;
   overflow: scroll;
-}
 
-.viewer >>> img {
-  max-width: 100%;
-}
-
-.is-split-2 {
-  grid-template-columns: repeat(2, 1fr);
-}
-
-.is-split-1 {
-  grid-template-columns: 1fr;
+  ::v-deep img {
+    max-width: 100%;
+  }
 }
 
 .editor {
   overflow-y: scroll;
 }
 
-.editor, .viewer {
-  height: calc(100vh - 60px);
-  box-sizing: border-box;
-}
-
-input.no-formatting {
+.no-formatting {
   all: unset;
 }
 
-mwc-icon.deleteFile {
-  filter: brightness(3);
-}
-
-mwc-icon.deleteFile:hover {
-  filter: initial;
+.title {
+  font-size: 1.1rem;
 }
 
 .is-new {
-  filter: brightness(3);
+  color: gray;
   font-style: italic;
+}
+
+.md-list-action .md-icon:not(:hover) {
+  color: rgb(238, 238, 238);
+}
+
+.md-button {
+  &[class*=" button-"] {
+    --md-theme-default-text-primary-on-background: white;
+  }
+
+  &.button-new {
+    --md-theme-default-background: rgb(255, 105, 19);
+  }
+
+  &.button-save {
+    --md-theme-default-background: rgb(66, 123, 255);;
+  }
+
+  &.button-toggle {
+    --md-theme-default-background: rgb(0, 167, 111);
+  }
 }
 </style>

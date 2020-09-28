@@ -8,42 +8,36 @@ import dayjs from 'dayjs'
 import { html_beautify } from 'js-beautify'
 import { Component, Vue } from 'vue-property-decorator'
 
+declare global {
+  interface Window {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    temp: any;
+  }
+}
+
 @Component<App>({
   watch: {
-    id () {
-      if (this.id) {
-        if (this.$route.query.id !== this.id) {
-          this.$router.push({
-            query: {
-              id: this.id
-            }
-          })
-        }
-      } else {
-        if (this.$route.fullPath !== '/') {
-          this.$router.push('/')
-        }
+    isDrawer () {
+      const elList = (this.$refs.elList as Vue)?.$el as HTMLDivElement
+
+      if (elList) {
+        this.filelist = []
+        this.queryMore()
+
+        elList.addEventListener('scroll', () => {
+          if (elList.offsetHeight + elList.scrollTop > elList.scrollHeight - 100) {
+            this.queryMore()
+          }
+        })
       }
     }
-  },
-  created () {
-    this.queryMore().then(() => {
-      if (!this.$route.query.id) {
-        setTimeout(() => {
-          if (this.filelist.length > 0) {
-            this.elList.select(0)
-          } else {
-            this.title = this.newTitle()
-          }
-        }, 100)
-      }
-    })
   },
   mounted () {
     this.codemirror = CodeMirror.fromTextArea(
       this.$refs.editor as HTMLTextAreaElement,
       cmOptions
     )
+    window.temp = this.codemirror
 
     this.codemirror.setSize('100%', '100%')
     this.codemirror.addKeyMap({
@@ -54,7 +48,9 @@ import { Component, Vue } from 'vue-property-decorator'
         this.saveFile()
       }
     })
-    this.codemirror.on('change', (cm) => {
+    this.codemirror.on('change', () => {
+      const cm = this.codemirror as CodeMirror.Editor
+
       this._markdown = cm.getValue()
       this.isEdited = true
       this.makeHtml.render(this._markdown, this.$refs.viewer as HTMLElement)
@@ -112,6 +108,9 @@ import { Component, Vue } from 'vue-property-decorator'
                 if (m.image) {
                   el.setAttribute('image', m.image)
                 }
+                if (m.mediaId) {
+                  el.setAttribute('media-id', m.mediaId)
+                }
                 if (m.title) {
                   el.setAttribute('title', m.title)
                 }
@@ -137,21 +136,22 @@ import { Component, Vue } from 'vue-property-decorator'
       }
     })
 
-    this.elList.addEventListener('scroll', () => {
-      if (this.elList.offsetHeight + this.elList.scrollTop >
-          this.elList.scrollHeight - 100) {
-        this.queryMore()
-      }
-    })
-
-    const id = this.$route.query.id as string
-    if (id) {
-      this.loadFile(id)
+    if (this.id) {
+      this.loadFile(this.id, true)
+    } else {
+      this.queryMore().then(() => {
+        const c = this.filelist[0]
+        if (c) {
+          this.loadFile(c.id)
+        } else {
+          this.title = this.newTitle()
+        }
+      })
     }
   }
 })
 export default class App extends Vue {
-  isEditor = true
+  isDrawer = false
   isViewer = true
 
   q = ''
@@ -164,12 +164,26 @@ export default class App extends Vue {
     title: string;
   }[] = []
 
-  id = ''
   title = ''
 
   totalFileCount = 0
 
   codemirror!: CodeMirror.Editor
+
+  get id () {
+    return this.$route.query.id as string || ''
+  }
+
+  set id (id: string) {
+    if (id && id !== this.id) {
+      this.$router.push({ query: { id } })
+      return
+    }
+
+    if (!id && this.id) {
+      this.$router.push('/')
+    }
+  }
 
   get markdown () {
     return this._markdown
@@ -245,22 +259,8 @@ export default class App extends Vue {
     return mk
   }
 
-  get elList () {
-    return this.$refs.list as HTMLElement & {
-      select(i: number): void;
-    }
-  }
-
   get elViewer () {
     return this.$refs.viewer as HTMLElement
-  }
-
-  getFocusedItem () {
-    if (!this.id) {
-      return null
-    }
-
-    return this.filelist.find((el) => el.id === this.id) || null
   }
 
   getMediaList () {
@@ -298,28 +298,13 @@ export default class App extends Vue {
   }
 
   setTitle () {
-    const current = this.getFocusedItem()
-
-    if (current) {
-      current.title = this.title
-      const i = this.filelist.indexOf(current)
-
-      if (i !== -1) {
-        this.filelist = [
-          ...this.filelist.slice(0, i),
-          current,
-          ...this.filelist.slice(i + 1)
-        ]
+    axios.patch('/api/entry/title', {
+      title: this.title
+    }, {
+      params: {
+        id: this.id
       }
-
-      axios.patch('/api/entry/title', {
-        title: this.title
-      }, {
-        params: {
-          id: this.id
-        }
-      })
-    }
+    })
   }
 
   async queryMore () {
@@ -344,8 +329,6 @@ export default class App extends Vue {
   }
 
   newFile () {
-    this.elList.select(-1)
-
     setTimeout(() => {
       this.id = ''
       this.title = this.newTitle()
@@ -357,8 +340,8 @@ export default class App extends Vue {
     }, 100)
   }
 
-  async loadFile (id: string) {
-    if (id === this.id) {
+  async loadFile (id: string, force?: boolean) {
+    if (!force && id === this.id) {
       return
     }
 
@@ -425,37 +408,8 @@ export default class App extends Vue {
       }
     })
 
-    const focusedItem = this.getFocusedItem()
-    const i = focusedItem ? this.filelist.indexOf(focusedItem) : -1
-
-    if (i !== -1) {
-      this.filelist = [
-        ...this.filelist.slice(0, i),
-        ...this.filelist.slice(i + 1)
-      ]
-
-      if (i >= this.filelist.length) {
-        this.elList.select(0)
-      } else {
-        this.elList.select(i)
-      }
-
-      return
+    if (id === this.id) {
+      this.newFile()
     }
-
-    this.newFile()
-  }
-
-  async doQuery () {
-    this.filelist = []
-    await this.queryMore()
-    setTimeout(() => {
-      const focusedItem = this.getFocusedItem()
-      const i = focusedItem ? this.filelist.indexOf(focusedItem) : -1
-
-      if (i !== -1) {
-        this.elList.select(i)
-      }
-    }, 100)
   }
 }

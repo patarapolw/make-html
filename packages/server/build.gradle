@@ -34,6 +34,6 @@ application {
 
 shadowJar {
     archiveClassifier = ''
-    archiveVersion = '0.1.3'
+    archiveVersion = '0.1.4'
     destinationDir = file('.')
 }

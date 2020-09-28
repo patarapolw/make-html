@@ -8,12 +8,6 @@
     "lint": "vue-cli-service lint"
   },
   "dependencies": {
-    "@material/mwc-button": "^0.18.0",
-    "@material/mwc-drawer": "^0.18.0",
-    "@material/mwc-icon-button": "^0.18.0",
-    "@material/mwc-list": "^0.18.0",
-    "@material/mwc-textfield": "^0.18.0",
-    "@material/mwc-top-app-bar": "^0.18.0",
     "@patarapolw/make-html-x-card": "*",
     "@patarapolw/markdown-it-imsize": "^2.0.1-dev3",
     "@types/codemirror": "^0.0.98",
@@ -42,6 +36,7 @@
     "vue": "^2.6.11",
     "vue-class-component": "^7.2.3",
     "vue-codemirror": "^4.0.6",
+    "vue-material": "^1.0.0-beta-15",
     "vue-property-decorator": "^8.4.2",
     "vue-router": "^3.4.5"
   },
@@ -62,6 +57,8 @@
     "eslint-plugin-standard": "^4.0.0",
     "eslint-plugin-vue": "^6.2.2",
     "import-sort-parser-typescript": "^6.0.0",
+    "sass": "^1.26.11",
+    "sass-loader": "^10.0.2",
     "typescript": "~3.9.3",
     "vue-template-compiler": "^2.6.11"
   },

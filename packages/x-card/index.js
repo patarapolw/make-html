@@ -67,18 +67,11 @@ export class XCard extends HTMLElement {
     // Await a little for incremental dom to load
     await new Promise((resolve) => setTimeout(resolve, 50))
 
-    /**
-    * @type {HTMLElement & {
-    *  onimg?: (function(HTMLImageElement): void);
-    * }}
-    */
-    // @ts-ignore
-    const self = this
-
     const aEl = /** @type {HTMLAnchorElement} */ (this.querySelector('a').cloneNode(true))
     if (aEl && aEl.textContent) {
       const href = this.getAttribute('href')
       const image = this.getAttribute('image')
+      const mediaId = this.getAttribute('media-id')
       const title = this.getAttribute('title')
       const description = this.getAttribute('description')
 
@@ -90,7 +83,7 @@ export class XCard extends HTMLElement {
 
       const shadow = this.attachShadow({ mode: 'open' })
 
-      if (image) {
+      if (mediaId || image) {
         /** @type {HTMLDivElement} */ (aEl.querySelector('.figure')).style.display = 'flex'
 
         const imgEl = aEl.querySelector('img')
@@ -99,13 +92,9 @@ export class XCard extends HTMLElement {
         }))
 
         Object.assign(imgEl, {
-          src: image,
+          src: mediaId ? `/media/${mediaId}.png` : image,
           alt: title || href
         })
-
-        if (self.onimg) {
-          self.onimg(imgEl)
-        }
       }
 
       /** @type {HTMLDivElement} */ (aEl.querySelector('.header')).innerText = title || href
