@@ -1,37 +1,51 @@
 package makehtml
 
-import io.javalin.Javalin
-import io.javalin.apibuilder.ApiBuilder.*
-import io.javalin.plugin.json.FromJsonMapper
-import io.javalin.plugin.json.JavalinJson
-import io.javalin.plugin.json.ToJsonMapper
 import makehtml.api.Api
-import makehtml.api.MediaController
+import org.eclipse.swt.SWT
+import org.eclipse.swt.browser.Browser
+import org.eclipse.swt.browser.TitleListener
+import org.eclipse.swt.layout.FillLayout
+import org.eclipse.swt.widgets.Display
+import org.eclipse.swt.widgets.Shell
+import java.net.URL
 
-fun main(args: Array<String>) {
-    JavalinJson.fromJsonMapper = object: FromJsonMapper {
-        override fun <T> map(json: String, targetClass: Class<T>) =
-                Api.gson.fromJson(json, targetClass)
+fun main() {
+    val display = Display()
+    val shell = Shell(display)
+    shell.maximized = true
+    shell.text = "MakeHTML editor"
+
+    val layout = FillLayout()
+
+    val browser = Browser(shell, SWT.FILL)
+    browser.addTitleListener { TitleListener {
+        shell.text = it.title
+    } }
+
+    shell.layout = layout
+    shell.open()
+
+    val port = System.getenv("PORT")?.toInt() ?: 24000
+    val url = URL("http://localhost:$port")
+
+    val app = Api.server()
+
+    shell.addDisposeListener {
+        app.stop()
     }
 
-    JavalinJson.toJsonMapper = object: ToJsonMapper {
-        override fun map(obj: Any): String = Api.gson.toJson(obj)
-    }
-
-    val app = Javalin.create {
-        it.addStaticFiles("/public")
-
-        if (!Api.db.isJar) {
-            it.enableCorsForAllOrigins()
+    app.events {
+        it.serverStarted {
+            Display.getDefault().asyncExec {
+                browser.url = url.toString()
+            }
+            while (!shell.isDisposed) {
+                if (!display.readAndDispatch()) {
+                    display.sleep()
+                }
+            }
         }
-
-        if (System.getenv("DEBUG") == "1") {
-            it.enableDevLogging()
-        }
-    }.start(System.getenv("PORT")?.toInt() ?: 24000)
-
-    app.routes {
-        path("api", Api.router)
-        get("media/:name", MediaController::getOne)
     }
+
+    app.start(port)
 }
