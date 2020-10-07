@@ -15,12 +15,13 @@ func main() {
 
 	cmdArgs = append(cmdArgs, "makehtml.jar")
 
-	err := exec.Command(
-		"java",
-		cmdArgs...,
-	).Wait()
+	cmd := exec.Command("java", cmdArgs...)
 
-	if err != nil {
+	if err := cmd.Start(); err != nil {
+		log.Fatal(err)
+	}
+
+	if err := cmd.Wait(); err != nil {
 		log.Fatal(err)
 	}
 }
