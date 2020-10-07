@@ -3,7 +3,7 @@
 build-mac:
   command: |
     PLATFORM=macos
-    OSGI_PLATFORM=cocoa.macosx.x86_64
+    export OSGI_PLATFORM=cocoa.macosx.x86_64
 
     cd packages/server
     ./gradlew shadowJar
@@ -24,7 +24,7 @@ build-mac:
 build-linux:
   command: |
     PLATFORM=linux
-    OSGI_PLATFORM=gtk.linux.x86_64
+    export OSGI_PLATFORM=gtk.linux.x86_64
 
     cd packages/server
     ./gradlew shadowJar
@@ -45,7 +45,7 @@ build-linux:
 build-windows:
   command: |
     PLATFORM=windows
-    OSGI_PLATFORM=win32.win32.x86_64
+    export OSGI_PLATFORM=win32.win32.x86_64
 
     cd packages/server
     ./gradlew shadowJar
@@ -74,7 +74,7 @@ build-all:
     robo -c {{ .robo.file }} build-mac
 
 install:
-  command:
+  command: |
     cd packages/x-card
     pnpm i
     pnpm link
@@ -87,7 +87,7 @@ install:
     cd -
 
 start:
-  command:
+  command: |
     cd packages/server
     ./gradlew run
 
