@@ -2,35 +2,68 @@
 
 build-mac:
   command: |
+    PLATFORM=macos
+    OSGI_PLATFORM=cocoa.macosx.x86_64
+
     cd packages/server
-    OSGI_PLATFORM=cocoa.macosx.x86_64 ./gradlew shadowJar
+    ./gradlew shadowJar
     cd -
 
     $(go env GOPATH)/bin/xgo \
       -branch={{.branch}} \
       -targets=darwin/amd64 \
       {{.repo}}
+    
+    rm -rf ./dist/$PLATFORM
+    mkdir -p ./dist/$PLATFORM
+    mv packages/server/makehtml-$OSGI_PLATFORM.jar dist/$PLATFORM/makehtml.jar
+    mv make-html-darwin-10.6-amd64 dist/$PLATFORM/makehtml.app
+
+    zip -j dist/makehtml-$PLATFORM.zip dist/$PLATFORM/*
+
 build-linux:
   command: |
+    PLATFORM=linux
+    OSGI_PLATFORM=gtk.linux.x86_64
+
     cd packages/server
-    OSGI_PLATFORM=gtk.linux.x86_64 ./gradlew shadowJar
+    ./gradlew shadowJar
     cd -
 
     $(go env GOPATH)/bin/xgo \
       -branch={{.branch}} \
-      -targets=linux/* \
+      -targets=linux/amd64 \
       {{.repo}}
+
+    rm -rf ./dist/$PLATFORM
+    mkdir -p ./dist/$PLATFORM
+    mv packages/server/makehtml-$OSGI_PLATFORM.jar dist/$PLATFORM/makehtml.jar
+    mv make-html-linux-amd64 dist/$PLATFORM/makehtml
+
+    zip -j dist/makehtml-$PLATFORM.zip dist/$PLATFORM/*
+
 build-windows:
   command: |
+    PLATFORM=windows
+    OSGI_PLATFORM=win32.win32.x86_64
+
     cd packages/server
-    OSGI_PLATFORM=win32.win32.x86_64 ./gradlew shadowJar
+    ./gradlew shadowJar
     cd -
 
     $(go env GOPATH)/bin/xgo \
       -ldflags="-H windowsgui" \
       -branch={{.branch}} \
-      -targets=windows/* \
+      -targets=windows/amd64 \
       {{.repo}}
+
+    rm -rf ./dist/$PLATFORM
+    mkdir -p ./dist/$PLATFORM
+    mv packages/server/makehtml-$OSGI_PLATFORM.jar dist/$PLATFORM/makehtml.jar
+    mv make-html-windows-4.0-amd64.exe dist/$PLATFORM/makehtml.exe
+
+    zip -j dist/makehtml-$PLATFORM.zip dist/$PLATFORM/*
+
 build-all:
   summary: |
     Build for Linux, Windows, and macOS
@@ -39,6 +72,24 @@ build-all:
     robo -c {{ .robo.file }} build-linux
     robo -c {{ .robo.file }} build-windows
     robo -c {{ .robo.file }} build-mac
+
+install:
+  command:
+    cd packages/x-card
+    pnpm i
+    pnpm link
+    cd -
+
+    cd packages/web
+    echo 'shamefully-hoist=true' >> .npmrc
+    pnpm i
+    pnpm build
+    cd -
+
+start:
+  command:
+    cd packages/server
+    ./gradlew run
 
 ##########
 # Settings
