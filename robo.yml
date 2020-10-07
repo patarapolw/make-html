@@ -9,7 +9,7 @@ build-mac:
     $(go env GOPATH)/bin/xgo \
       -branch={{.branch}} \
       -targets=darwin/amd64 \
-      {{.repo}}/packges/electron
+      {{.repo}}
 build-linux:
   command: |
     cd packages/server
@@ -19,7 +19,7 @@ build-linux:
     $(go env GOPATH)/bin/xgo \
       -branch={{.branch}} \
       -targets=linux/* \
-      {{.repo}}/packges/electron
+      {{.repo}}
 build-windows:
   command: |
     cd packages/server
@@ -30,7 +30,7 @@ build-windows:
       -ldflags="-H windowsgui" \
       -branch={{.branch}} \
       -targets=windows/* \
-      {{.repo}}/packges/electron
+      {{.repo}}
 build-all:
   summary: |
     Build for Linux, Windows, and macOS
