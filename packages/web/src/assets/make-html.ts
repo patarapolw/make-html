@@ -180,7 +180,7 @@ export class MakeHtml {
   render (s: string, dom: HTMLElement) {
     try {
       const body = document.createElement('div')
-      body.className = `.${this.id}`
+      body.className = this.id
       body.innerHTML = this._mdConvert(matter.split(s).content)
 
       body.querySelectorAll('style').forEach((el) => {

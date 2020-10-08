@@ -89,6 +89,12 @@ install:
 
     go build
 
+build:
+  command: |
+    cd packages/web
+    pnpm build
+    cd -
+
 start:
   command: |
     GRADLE=1 go run .

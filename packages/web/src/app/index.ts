@@ -30,6 +30,14 @@ declare global {
           }
         })
       }
+    },
+    isEdited() {
+      window.onbeforeunload = this.isEdited
+        ? (evt: BeforeUnloadEvent) => {
+          evt.returnValue = ' '
+          return false
+        }
+        : null
     }
   },
   mounted () {
