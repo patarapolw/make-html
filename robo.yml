@@ -1,0 +1,129 @@
+# Commands
+
+build-mac:
+  command: |
+    PLATFORM=macos
+
+    cd packages/server
+    ./gradlew shadowJar
+    cd -
+
+    $(go env GOPATH)/bin/xgo \
+      -branch={{.branch}} \
+      -targets=darwin/amd64 \
+      {{.repo}}
+    
+    rm -rf ./dist/$PLATFORM
+    mkdir -p ./dist/$PLATFORM
+    mv packages/server/makehtml.jar dist/$PLATFORM/makehtml.jar
+    mv make-html-darwin-10.6-amd64 dist/$PLATFORM/makehtml.app
+
+    zip -j dist/makehtml-$PLATFORM.zip dist/$PLATFORM/*
+
+build-linux:
+  command: |
+    PLATFORM=linux
+
+    cd packages/server
+    ./gradlew shadowJar
+    cd -
+
+    $(go env GOPATH)/bin/xgo \
+      -branch={{.branch}} \
+      -targets=linux/amd64 \
+      {{.repo}}
+
+    rm -rf ./dist/$PLATFORM
+    mkdir -p ./dist/$PLATFORM
+    mv packages/server/makehtml.jar dist/$PLATFORM/makehtml.jar
+    mv make-html-linux-amd64 dist/$PLATFORM/makehtml
+
+    zip -j dist/makehtml-$PLATFORM.zip dist/$PLATFORM/*
+
+build-windows:
+  command: |
+    PLATFORM=windows
+
+    cd packages/server
+    ./gradlew shadowJar
+    cd -
+
+    $(go env GOPATH)/bin/xgo \
+      -ldflags="-H windowsgui" \
+      -branch={{.branch}} \
+      -targets=windows/amd64 \
+      {{.repo}}
+
+    rm -rf ./dist/$PLATFORM
+    mkdir -p ./dist/$PLATFORM
+    mv packages/server/makehtml.jar dist/$PLATFORM/makehtml.jar
+    mv make-html-windows-4.0-amd64.exe dist/$PLATFORM/makehtml.exe
+
+    zip -j dist/makehtml-$PLATFORM.zip dist/$PLATFORM/*
+
+build-all:
+  summary: |
+    Build for Linux, Windows, and macOS
+    Install `xgo` using `go get github.com/karalabe/xgo`
+  command: |
+    robo -c {{ .robo.file }} build-linux
+    robo -c {{ .robo.file }} build-windows
+    robo -c {{ .robo.file }} build-mac
+
+install:
+  command: |
+    cd packages/x-card
+    pnpm i
+    pnpm link
+    cd -
+
+    cd packages/web
+    echo 'shamefully-hoist=true' > .npmrc
+    pnpm i
+    pnpm build
+    cd -
+
+    cd packages/server
+    ./gradlew shadowJar
+    cd -
+
+    go build
+
+start:
+  command: |
+    if [ ! -f packages/server/makehtml.jar ]; then
+      cd packages/server
+      ./gradlew shadowJar
+      cd -
+    fi
+
+    SERVER=packages/server/makehtml.jar ./make-html
+
+dev:
+  command: |
+    export PORT=12000
+    export CONCURRENTLY=1
+
+    cd packages/web
+    pnpm dev &
+    PID_WEB=$!
+    cd ../..
+
+    cd packages/server
+    PORT=24000 java -jar makehtml.jar &
+    PID_SERVER=$!
+    cd ../..
+
+    go run .
+    
+    kill -9 $PID_WEB
+    kill -9 $PID_SERVER
+
+    kill -9 `lsof -i:$PORT -t`
+
+##########
+# Settings
+
+variables:
+  repo: github.com/patarapolw/make-html
+  branch: $(git branch --show-current)
