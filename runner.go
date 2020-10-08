@@ -33,6 +33,10 @@ import (
 	"github.com/phayes/freeport"
 	"github.com/zserge/lorca"
 )
+import (
+	"path"
+	"path/filepath"
+)
 
 func main() {
 	if lorca.LocateChrome() == "" {
@@ -65,7 +69,12 @@ func main() {
 
 	srv := os.Getenv("SERVER")
 	if srv == "" {
-		srv = "makehtml.jar"
+		ex, err := os.Executable()
+		if err != nil {
+			log.Fatal(err)
+		}
+
+		srv = path.Join(filepath.Dir(ex), "makehtml.jar")
 	}
 
 	cmd := exec.Command("java", "-jar", srv)
