@@ -95,19 +95,9 @@ build:
     pnpm build
     cd -
 
-    cd packages/server
-    ./gradlew shadowJar
-    cd -
-
 start:
   command: |
-    if [ ! -f packages/server/makehtml.jar ]; then
-      cd packages/server
-      ./gradlew shadowJar
-      cd -
-    fi
-
-    GRADLE=1 go run .
+    PORT=24000 GRADLE=1 go run .
 
 dev:
   command: |
@@ -116,18 +106,9 @@ dev:
 
     cd packages/web
     pnpm dev &
-    PID_WEB=$!
-    cd ../..
+    cd -
 
-    cd packages/server
-    PORT=24000 java -jar makehtml.jar &
-    PID_SERVER=$!
-    cd ../..
-
-    go run .
-    
-    kill -9 $PID_WEB
-    kill -9 $PID_SERVER
+    GRADLE=1 go run .
 
     kill -9 `lsof -i:$PORT -t`
 

@@ -49,7 +49,7 @@ func main() {
 	)
 
 	if err != nil {
-		panic(err)
+		log.Fatal(err)
 	}
 
 	w.SetBounds(lorca.Bounds{
@@ -71,7 +71,7 @@ func main() {
 
 	url := strings.Join([]string{"http://localhost:", port}, "")
 
-	cmd := exec.Command("java", "-jar", "makehtml.jar")
+	var cmd *exec.Cmd
 
 	if os.Getenv("GRADLE") == "" {
 		ex, err := os.Executable()
@@ -79,9 +79,12 @@ func main() {
 			log.Fatal(err)
 		}
 
+		cmd = exec.Command("java", "-jar", "makehtml.jar")
 		cmd.Dir = filepath.Dir(ex)
 	} else {
+		cmd = exec.Command("./gradlew", "run")
 		cmd.Dir = "./packages/server"
+		cmd.Env = append(cmd.Env, "PORT=24000")
 	}
 
 	cmd.Stdout = os.Stdout
