@@ -91,13 +91,7 @@ install:
 
 start:
   command: |
-    if [ ! -f packages/server/makehtml.jar ]; then
-      cd packages/server
-      ./gradlew shadowJar
-      cd -
-    fi
-
-    SERVER=packages/server/makehtml.jar ./make-html
+    SERVER='cd packages/server && ./gradlew run' go run .
 
 dev:
   command: |

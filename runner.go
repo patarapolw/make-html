@@ -67,6 +67,8 @@ func main() {
 
 	url := strings.Join([]string{"http://localhost:", port}, "")
 
+	var cmd *exec.Cmd
+
 	srv := os.Getenv("SERVER")
 	if srv == "" {
 		ex, err := os.Executable()
@@ -74,10 +76,14 @@ func main() {
 			log.Fatal(err)
 		}
 
-		srv = path.Join(filepath.Dir(ex), "makehtml.jar")
+		cmd = exec.Command("java", "-jar", path.Join(filepath.Dir(ex), "makehtml.jar"))
+	} else {
+		cmd = exec.Command("sh", "-c", srv)
 	}
 
-	cmd := exec.Command("java", "-jar", srv)
+	cmd.Stdout = os.Stdout
+	cmd.Stderr = os.Stderr
+
 	hideWindow(cmd)
 
 	if err := cmd.Start(); err != nil {
