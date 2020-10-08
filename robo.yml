@@ -91,7 +91,7 @@ install:
 
 start:
   command: |
-    SERVER='cd packages/server && ./gradlew run' go run .
+    GRADLE=1 go run .
 
 dev:
   command: |

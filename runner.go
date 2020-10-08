@@ -50,9 +50,16 @@ func main() {
 		int(C.display_width()),
 		int(C.display_height()),
 	)
+
 	if err != nil {
 		panic(err)
 	}
+
+	w.SetBounds(lorca.Bounds{
+		WindowState: lorca.WindowStateMaximized,
+	})
+
+	defer w.Close()
 
 	port := os.Getenv("PORT")
 	if port == "" || port == "0" {
@@ -69,8 +76,7 @@ func main() {
 
 	var cmd *exec.Cmd
 
-	srv := os.Getenv("SERVER")
-	if srv == "" {
+	if os.Getenv("GRADLE") == "" {
 		ex, err := os.Executable()
 		if err != nil {
 			log.Fatal(err)
@@ -78,7 +84,8 @@ func main() {
 
 		cmd = exec.Command("java", "-jar", path.Join(filepath.Dir(ex), "makehtml.jar"))
 	} else {
-		cmd = exec.Command("sh", "-c", srv)
+		cmd = exec.Command("./gradlew", "run")
+		cmd.Dir = "./packages/server"
 	}
 
 	cmd.Stdout = os.Stdout
@@ -90,12 +97,7 @@ func main() {
 		log.Fatal(err)
 	}
 
-	w.SetBounds(lorca.Bounds{
-		WindowState: lorca.WindowStateMaximized,
-	})
-
 	defer cmd.Process.Kill()
-	defer w.Close()
 
 	go func() {
 		for {
