@@ -69,6 +69,7 @@ func main() {
 	}
 
 	cmd := exec.Command("java", "-jar", srv)
+	hideWindow(cmd)
 
 	if err := cmd.Start(); err != nil {
 		log.Fatal(err)
