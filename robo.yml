@@ -3,7 +3,6 @@
 build-mac:
   command: |
     PLATFORM=macos
-    export OSGI_PLATFORM=cocoa.macosx.x86_64
 
     cd packages/server
     ./gradlew shadowJar
@@ -16,7 +15,7 @@ build-mac:
     
     rm -rf ./dist/$PLATFORM
     mkdir -p ./dist/$PLATFORM
-    mv packages/server/makehtml-$OSGI_PLATFORM.jar dist/$PLATFORM/makehtml.jar
+    mv packages/server/makehtml.jar dist/$PLATFORM/makehtml.jar
     mv make-html-darwin-10.6-amd64 dist/$PLATFORM/makehtml.app
 
     zip -j dist/makehtml-$PLATFORM.zip dist/$PLATFORM/*
@@ -24,7 +23,6 @@ build-mac:
 build-linux:
   command: |
     PLATFORM=linux
-    export OSGI_PLATFORM=gtk.linux.x86_64
 
     cd packages/server
     ./gradlew shadowJar
@@ -37,7 +35,7 @@ build-linux:
 
     rm -rf ./dist/$PLATFORM
     mkdir -p ./dist/$PLATFORM
-    mv packages/server/makehtml-$OSGI_PLATFORM.jar dist/$PLATFORM/makehtml.jar
+    mv packages/server/makehtml.jar dist/$PLATFORM/makehtml.jar
     mv make-html-linux-amd64 dist/$PLATFORM/makehtml
 
     zip -j dist/makehtml-$PLATFORM.zip dist/$PLATFORM/*
@@ -45,7 +43,6 @@ build-linux:
 build-windows:
   command: |
     PLATFORM=windows
-    export OSGI_PLATFORM=win32.win32.x86_64
 
     cd packages/server
     ./gradlew shadowJar
@@ -59,7 +56,7 @@ build-windows:
 
     rm -rf ./dist/$PLATFORM
     mkdir -p ./dist/$PLATFORM
-    mv packages/server/makehtml-$OSGI_PLATFORM.jar dist/$PLATFORM/makehtml.jar
+    mv packages/server/makehtml.jar dist/$PLATFORM/makehtml.jar
     mv make-html-windows-4.0-amd64.exe dist/$PLATFORM/makehtml.exe
 
     zip -j dist/makehtml-$PLATFORM.zip dist/$PLATFORM/*
@@ -81,15 +78,42 @@ install:
     cd -
 
     cd packages/web
-    echo 'shamefully-hoist=true' >> .npmrc
+    echo 'shamefully-hoist=true' > .npmrc
     pnpm i
     pnpm build
     cd -
 
+    cd packages/server
+    ./gradlew shadowJar
+    cd -
+
+    go build
+
 start:
   command: |
+    SERVER=packages/server/makehtml.jar ./make-html
+
+dev:
+  command: |
+    export PORT=12000
+    export CONCURRENTLY=1
+
+    cd packages/web
+    pnpm dev &
+    PID_WEB=$!
+    cd ../..
+
     cd packages/server
-    ./gradlew run
+    PORT=24000 java -jar makehtml.jar &
+    PID_SERVER=$!
+    cd ../..
+
+    go run .
+    
+    kill -9 $PID_WEB
+    kill -9 $PID_SERVER
+
+    kill -9 `lsof -i:$PORT -t`
 
 ##########
 # Settings

@@ -30,7 +30,7 @@ object Api {
         }
 
         JavalinJson.toJsonMapper = object: ToJsonMapper {
-            override fun map(obj: Any): String = Api.gson.toJson(obj)
+            override fun map(obj: Any): String = gson.toJson(obj)
         }
 
         val app = Javalin.create {

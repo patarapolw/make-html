@@ -12,6 +12,7 @@ module.exports = {
       '^/(api|media)/': {
         target: 'http://localhost:24000'
       }
-    }
+    },
+    progress: !process.env.CONCURRENTLY
   }
 }
