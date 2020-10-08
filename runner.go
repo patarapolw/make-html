@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"os"
 	"os/exec"
+	"path/filepath"
 	"strconv"
 	"strings"
 	"time"
@@ -32,10 +33,6 @@ import (
 
 	"github.com/phayes/freeport"
 	"github.com/zserge/lorca"
-)
-import (
-	"path"
-	"path/filepath"
 )
 
 func main() {
@@ -74,7 +71,7 @@ func main() {
 
 	url := strings.Join([]string{"http://localhost:", port}, "")
 
-	var cmd *exec.Cmd
+	cmd := exec.Command("java", "-jar", "makehtml.jar")
 
 	if os.Getenv("GRADLE") == "" {
 		ex, err := os.Executable()
@@ -82,9 +79,8 @@ func main() {
 			log.Fatal(err)
 		}
 
-		cmd = exec.Command("java", "-jar", path.Join(filepath.Dir(ex), "makehtml.jar"))
+		cmd.Dir = filepath.Dir(ex)
 	} else {
-		cmd = exec.Command("./gradlew", "run")
 		cmd.Dir = "./packages/server"
 	}
 

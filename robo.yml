@@ -95,8 +95,18 @@ build:
     pnpm build
     cd -
 
+    cd packages/server
+    ./gradlew shadowJar
+    cd -
+
 start:
   command: |
+    if [ ! -f packages/server/makehtml.jar ]; then
+      cd packages/server
+      ./gradlew shadowJar
+      cd -
+    fi
+
     GRADLE=1 go run .
 
 dev:
