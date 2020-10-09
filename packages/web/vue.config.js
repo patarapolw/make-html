@@ -6,10 +6,10 @@ module.exports = {
   configureWebpack (config) {
     config.resolve.extensions.unshift('.vue')
   },
-  outputDir: path.resolve('../server/src/main/resources/public'),
+  outputDir: path.resolve('../electron/public'),
   devServer: {
     proxy: {
-      '^/(api|media)/': {
+      '^/(api|media|data)/': {
         target: 'http://localhost:24000'
       }
     },

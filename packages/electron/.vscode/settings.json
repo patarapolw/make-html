@@ -1,0 +1,8 @@
+{
+  "files.associations": {
+    ".prettierrc": "yaml"
+  },
+  "editor.codeActionsOnSave": {
+    "source.fixAll": true
+  }
+}
