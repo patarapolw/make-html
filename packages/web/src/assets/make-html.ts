@@ -88,9 +88,9 @@ export class MakeHtml {
   private hp: HyperPug
 
   // eslint-disable-next-line @typescript-eslint/no-empty-function
-  onCmChanged = () => {}
+  onCmChanged = (): void => {}
   // eslint-disable-next-line @typescript-eslint/no-empty-function
-  onPrismChanged = () => {}
+  onPrismChanged = (): void => {}
 
   constructor (public id = Math.random().toString(36)) {
     this.id = 'el-' + hashFnv32a(this.id)
@@ -177,7 +177,7 @@ export class MakeHtml {
     })
   }
 
-  render (s: string, dom: HTMLElement) {
+  render (s: string, dom: HTMLElement): void {
     try {
       const body = document.createElement('div')
       body.className = this.id
@@ -197,48 +197,6 @@ export class MakeHtml {
         Prism.highlightAllUnder(dom)
       }
       this.onPrismChanged()
-
-      dom.querySelectorAll('x-card').forEach((el) => {
-        const el0 = (el as HTMLElement & {
-          onimg: (imgEl: HTMLImageElement) => void;
-        })
-
-        el0.onimg = async (el) => {
-          if (el.src.startsWith('/')) {
-            return
-          }
-
-          try {
-            // eslint-disable-next-line no-new
-            new URL(el.src)
-          } catch (_) {
-            return
-          }
-
-          const downloadAttr = el.getAttribute('data-download')
-          if (!downloadAttr) {
-            return
-          }
-
-          let attr: {
-            maxWidth?: number;
-          } = {}
-
-          try {
-            attr = JSON.parse(downloadAttr)
-          } catch (_) {}
-
-          const { data } = await axios.post<{
-            id: string;
-          }>('/api/media/cache', attr, {
-            params: {
-              url: el.src
-            }
-          })
-
-          el.src = `/media/${data.id}.png`
-        }
-      })
     } catch (_) {}
   }
 
@@ -288,7 +246,7 @@ function getIndent (s: string) {
   return indents.length ? Math.min(...indents) : 0
 }
 
-export function stripIndent (s: string, indent = getIndent(s)) {
+export function stripIndent (s: string, indent = getIndent(s)): string {
   return s
     .split('\n')
     .map((r) => r.replace(new RegExp(`^ {1,${indent}}`), ''))

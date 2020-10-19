@@ -21,7 +21,7 @@ export default function (
       file: UploadedFile
     }
   }>(
-    '/',
+    '/upload',
     {
       schema: {
         body: {
@@ -61,6 +61,7 @@ export default function (
       })
 
       return {
+        filename: f.join(''),
         url: `/media/${f.join('')}`
       }
     }

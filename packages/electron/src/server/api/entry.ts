@@ -84,7 +84,6 @@ export default function (
 
       let result: {
         filename: string
-        markdown?: string
         updatedAt?: string
       }[] = []
 
@@ -155,8 +154,6 @@ export default function (
               .format('YYYY-MM-DDTHH:mmZ')
           }
 
-          r.markdown = fs.readFileSync(path.join(dataDir, r.filename), 'utf-8')
-
           return r
         })
       }
@@ -164,35 +161,26 @@ export default function (
   )
 
   f.put<{
-    Querystring: {
-      filename: string
-    }
     Body: {
+      filename: string
       markdown: string
     }
   }>(
     '/',
     {
       schema: {
-        querystring: {
-          type: 'object',
-          required: ['filename'],
-          properties: {
-            filename: { type: 'string' }
-          }
-        },
         body: {
           type: 'object',
-          required: ['markdown'],
+          required: ['filename', 'markdown'],
           properties: {
+            filename: { type: 'string' },
             markdown: { type: 'string' }
           }
         }
       }
     },
     async (req, res) => {
-      const { filename: _filename } = req.query
-      const { markdown } = req.body
+      const { filename: _filename, markdown } = req.body
 
       const filepathBase = path.join(
         dataDir,
@@ -245,11 +233,17 @@ export default function (
     '/',
     {
       schema: {
+        querystring: {
+          type: 'object',
+          required: ['filename'],
+          properties: {
+            filename: { type: 'string' }
+          }
+        },
         body: {
           type: 'object',
-          required: ['filename', 'markdown'],
+          required: ['markdown'],
           properties: {
-            filename: { type: 'string' },
             markdown: { type: 'string' }
           }
         }
@@ -276,6 +270,35 @@ export default function (
       return null
     }
   )
+
+  f.patch<{
+    Querystring: {
+      filename: string
+    },
+    Body: {
+      filename: string
+    }
+  }>('/filename', {}, async (req, res) => {
+    const { filename: oldFilename } = req.query
+    const { filename: newFilename } = req.body
+
+    await fs.rename(path.join(dataDir, oldFilename), path.join(dataDir, newFilename))
+    idx.removeDocByRef(oldFilename)
+    addDoc(newFilename)
+
+    spawnSync('git', ['add', '.'], {
+      cwd: userDataDir,
+      stdio: 'inherit'
+    })
+    spawnSync('git', ['update', '-m', `Rename ${oldFilename} to ${newFilename}`], {
+      cwd: userDataDir,
+      stdio: 'inherit'
+    })
+
+    res.status(201)
+
+    return null
+  })
 
   f.delete<{
     Querystring: {

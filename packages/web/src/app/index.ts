@@ -10,8 +10,7 @@ import { Component, Vue } from 'vue-property-decorator'
 
 declare global {
   interface Window {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    temp: any;
+    codemirror: CodeMirror.Editor;
   }
 }
 
@@ -45,7 +44,7 @@ declare global {
       this.$refs.editor as HTMLTextAreaElement,
       cmOptions
     )
-    window.temp = this.codemirror
+    window.codemirror = this.codemirror
 
     this.codemirror.setSize('100%', '100%')
     this.codemirror.addKeyMap({
@@ -80,16 +79,15 @@ declare global {
             const cursor = ins.getCursor()
 
             const { data } = await axios.post<{
-              id: string;
+              url: string;
             }>('/api/media/upload', formData)
 
-            ins.getDoc().replaceRange(`![clipboard](/media/${data.id}.png)`, cursor)
+            ins.getDoc().replaceRange(`![clipboard](/media/${data.url}.png)`, cursor)
           } else if (item.type === 'text/plain') {
             const cursor = ins.getCursor()
             item.getAsString(async (str) => {
               if (/^https?:\/\//.test(str)) {
                 const { data: m } = await axios.get<{
-                  mediaId?: string;
                   url: string;
                   title?: string;
                   description?: string;
@@ -116,9 +114,6 @@ declare global {
                 if (m.image) {
                   el.setAttribute('image', m.image)
                 }
-                if (m.mediaId) {
-                  el.setAttribute('media-id', m.mediaId)
-                }
                 if (m.title) {
                   el.setAttribute('title', m.title)
                 }
@@ -144,15 +139,15 @@ declare global {
       }
     })
 
-    if (this.id) {
-      this.loadFile(this.id, true)
+    if (this.currentFilename) {
+      this.loadFile(this.currentFilename, true)
     } else {
       this.queryMore().then(() => {
         const c = this.filelist[0]
         if (c) {
-          this.loadFile(c.id)
+          this.loadFile(c.filename)
         } else {
-          this.title = this.newTitle()
+          this.filename = this.newFilename()
         }
       })
     }
@@ -168,27 +163,26 @@ export default class App extends Vue {
   isEdited = false
 
   filelist: {
-    id: string;
-    title: string;
+    filename: string;
   }[] = []
 
-  title = ''
+  filename = ''
 
   totalFileCount = 0
 
   codemirror!: CodeMirror.Editor
 
-  get id () {
-    return this.$route.query.id as string || ''
+  get currentFilename () {
+    return this.$route.query.filename as string || ''
   }
 
-  set id (id: string) {
-    if (id && id !== this.id) {
-      this.$router.push({ query: { id } })
+  set currentFilename (f: string) {
+    if (f && f !== this.currentFilename) {
+      this.$router.push({ query: { filename: f } })
       return
     }
 
-    if (!id && this.id) {
+    if (!f && this.currentFilename) {
       this.$router.push('/')
     }
   }
@@ -259,7 +253,7 @@ export default class App extends Vue {
   }
 
   get makeHtml () {
-    const mk = new MakeHtml(this.id || undefined)
+    const mk = new MakeHtml(this.currentFilename || undefined)
     mk.onCmChanged = () => {
       this.codemirror.setOption('mode', cmOptions.mode)
     }
@@ -293,8 +287,10 @@ export default class App extends Vue {
     }).filter((src) => src).filter((el, i, arr) => arr.indexOf(el) === i)
   }
 
-  newTitle () {
-    return `Untitled (${new Date().toISOString().split('T')[0]})`
+  newFilename () {
+    return dayjs()
+      .subtract(new Date().getTimezoneOffset(), 'minute')
+      .format('YYYY-MM-DDTHH:mmZ')
   }
 
   getHtml () {
@@ -305,12 +301,12 @@ export default class App extends Vue {
     this.isViewer = !this.isViewer
   }
 
-  setTitle () {
-    axios.patch('/api/entry/title', {
-      title: this.title
+  setFilename () {
+    axios.patch('/api/entry/filename', {
+      filename: this.filename
     }, {
       params: {
-        id: this.id
+        filename: this.currentFilename
       }
     })
   }
@@ -318,8 +314,8 @@ export default class App extends Vue {
   async queryMore () {
     const { data } = await axios.get<{
       result: {
-        id: string;
-        title: string;
+        filename: string;
+        updatedAt: string;
       }[];
       count: number;
     }>('/api/entry/q', {
@@ -338,8 +334,8 @@ export default class App extends Vue {
 
   newFile () {
     setTimeout(() => {
-      this.id = ''
-      this.title = this.newTitle()
+      this.currentFilename = ''
+      this.filename = this.newFilename()
       this.markdown = ''
 
       setTimeout(() => {
@@ -348,22 +344,20 @@ export default class App extends Vue {
     }, 100)
   }
 
-  async loadFile (id: string, force?: boolean) {
-    if (!force && id === this.id) {
+  async loadFile (f: string, force?: boolean) {
+    if (!force && f === this.currentFilename) {
       return
     }
 
     const { data } = await axios.get<{
-      title: string;
       markdown: string;
     }>('/api/entry', {
       params: {
-        id
+        filename: f
       }
     })
 
-    this.id = id
-    this.title = data.title
+    this.currentFilename = f
     this.markdown = data.markdown
 
     setTimeout(() => {
@@ -374,33 +368,28 @@ export default class App extends Vue {
   async saveFile () {
     const { tag, date, ...meta } = this.frontmatter
     const payload = {
-      markdown: this.markdown,
-      html: this.getHtml(),
-      media: this.getMediaList(),
-      meta,
-      tag,
-      date
+      markdown: this.markdown
     }
 
-    if (this.id) {
+    if (this.currentFilename) {
       await axios.patch('/api/entry', payload, {
         params: {
-          id: this.id
+          filename: this.currentFilename
         }
       })
     } else {
       const { data } = await axios.put<{
-        id: string;
+        filename: string;
       }>('/api/entry', {
-        title: this.title,
+        filename: this.filename,
         ...payload
       })
 
-      this.id = data.id
+      this.filename = data.filename
+      this.currentFilename = data.filename
       this.filelist = [
         {
-          id: this.id,
-          title: this.title
+          filename: this.filename
         },
         ...this.filelist
       ]
@@ -409,14 +398,14 @@ export default class App extends Vue {
     this.isEdited = false
   }
 
-  async deleteFile (id: string) {
+  async deleteFile (f: string) {
     await axios.delete('/api/entry', {
       params: {
-        id
+        filename: f
       }
     })
 
-    if (id === this.id) {
+    if (f === this.currentFilename) {
       this.newFile()
     }
   }

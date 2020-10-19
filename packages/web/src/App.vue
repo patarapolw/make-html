@@ -8,17 +8,17 @@
         <md-icon>menu</md-icon>
       </md-button>
 
-      <input :class="'no-formatting title ' + (id ? '' : 'is-new')"
-        v-model="title" type="text"
-        @keydown.enter="() => { setTitle(); return false }"
-        @blur="setTitle"
+      <input :class="'no-formatting filename ' + (currentFilename ? '' : 'is-new')"
+        v-model="filename" type="text"
+        @keydown.enter="() => { setFilename(); return false }"
+        @blur="setFilename"
       />
 
       <div class="flex-grow-1"></div>
 
       <md-button class="md-raised button-new"
         @click="newFile"
-        :disabled="!id"
+        :disabled="!currentFilename"
       >
         New
       </md-button>
@@ -47,16 +47,16 @@
       <md-list ref="elList">
         <md-list-item
           v-for="el in filelist"
-          :key="el.id"
-          @click="loadFile(el.id)"
-          :data-selected="el.id === id"
+          :key="el.filename"
+          @click="loadFile(el.filename)"
+          :data-selected="el.filename === currentFilename"
         >
           <span class="md-list-item-text">
-            {{ el.title }}
+            {{ el.filename }}
           </span>
 
           <md-button class="md-icon-button md-list-action"
-            @click="deleteFile(el.id)"
+            @click="deleteFile(el.filename)"
           >
             <md-icon>delete</md-icon>
           </md-button>
@@ -135,7 +135,7 @@
   all: unset;
 }
 
-.title {
+.filename {
   font-size: 1.1rem;
 }
 
