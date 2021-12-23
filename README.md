@@ -1,3 +1,4 @@
+<!-- SPDX-Identifier: GPL-3.0-or-later -->
 # make-html
 
 My wanted Markdown features
@@ -20,3 +21,8 @@ To support old browsers, you might also need [@webcomponents/webcomponentsjs](ht
 <script src="https://unpkg.com/@webcomponents/webcomponentsjs/webcomponents-loader.js"></script>
 <script type="module" src="https://unpkg.com/@patarapolw/make-html-x-card"></script>
 ```
+
+# License
+
+make-html is fully libre in addition to being fully free. Libre means that you and every successive user of the software inherit the same rights, freedoms, and priveledges as the original author of the software. This generous concession is made possible via the power of the GNU GPL version 3 or later license.
+
